@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A1626">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Neuro CDSS">
+<meta name="application-name" content="Neuro CDSS">
+<meta name="description" content="Apoyo a la decision clinica para la evaluacion neuromotora del lactante: INFANIB, movimientos generales de Prechtl y HINE.">
+<meta name="format-detection" content="telephone=no">
+<title>Navegador INFANIB · Evaluación neuromotora del lactante</title>
+<style>
+:root{
+  --bg:#0A1626;
+  --surface:#132338;
+  --surface-2:#182B44;
+  --surface-3:#1E3350;
+  --line:#24384F;
+  --line-soft:#1D2E44;
+  --gold:#E9B949;
+  --gold-dim:#B98F2C;
+  --gold-soft:#3A2F14;
+  --text:#E9EEF4;
+  --text-2:#A7B6C6;
+  --text-3:#7B8B9E;
+  --normal:#5CB88A;
+  --normal-bg:#12301F;
+  --transient:#E9B949;
+  --transient-bg:#33290F;
+  --abnormal:#E4756A;
+  --abnormal-bg:#3A1A18;
+  --serif:ui-serif,Georgia,"Iowan Old Style","Palatino Linotype","Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{
+  font-family:var(--sans);color:var(--text);font-size:15.5px;line-height:1.55;
+  -webkit-text-size-adjust:100%;
+  padding-bottom:calc(128px + env(safe-area-inset-bottom));
+  overscroll-behavior-y:none;
+}
+.wrap{max-width:840px;margin:0 auto;
+  padding-left:calc(18px + env(safe-area-inset-left));
+  padding-right:calc(18px + env(safe-area-inset-right))}
+
+/* ── Cabecera ───────────────────────────────── */
+header{padding:calc(26px + env(safe-area-inset-top)) 0 0}
+.crumb{font-family:var(--serif);font-size:14px;color:var(--text-2);letter-spacing:.01em}
+.crumb b{color:var(--gold);font-weight:700;letter-spacing:.04em}
+.rule-t{height:1px;background:var(--line);margin:12px 0 20px}
+h1{font-family:var(--serif);font-weight:700;font-size:34px;line-height:1.12;margin:0 0 14px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--gold)}
+.lead{margin:0 0 14px;font-size:16.5px;color:var(--text);line-height:1.5;max-width:56ch}
+.srcline{margin:0 0 18px;font-size:13px;color:var(--text-3);line-height:1.5;max-width:62ch}
+.btn-reset{
+  font-family:var(--sans);font-size:14px;color:var(--text-2);background:none;
+  border:1px dashed var(--line);border-radius:9px;padding:10px 22px;cursor:pointer;margin-bottom:20px
+}
+.btn-reset:hover{color:var(--gold);border-color:var(--gold-dim)}
+
+/* ── Pestañas ───────────────────────────────── */
+.tabs{display:flex;gap:26px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  font-family:var(--sans);font-size:15px;font-weight:600;color:var(--text-2);background:none;border:none;
+  padding:10px 0 12px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px
+}
+.tabs button.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── Tarjetas ───────────────────────────────── */
+main{padding-top:22px}
+.panel{display:none}
+.panel.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:16px;padding:20px;margin-bottom:18px}
+.card>h2{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.2;margin:0 0 8px}
+.card>h2 em{font-style:normal;color:var(--gold)}
+.card>.sub{margin:0 0 16px;font-size:14.5px;color:var(--text-2);line-height:1.5}
+h3.sec{font-family:var(--serif);font-weight:700;font-size:20px;margin:26px 0 12px}
+.subcard{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:13px;padding:16px;margin-bottom:12px}
+.subcard h4{font-family:var(--serif);font-weight:700;font-size:17.5px;margin:0 0 3px}
+.subcard .kicker{color:var(--gold);font-size:14.5px;margin:0 0 8px}
+.subcard p{margin:0;color:var(--text-2);font-size:14.5px;line-height:1.55}
+.note{border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:12px 0 0;color:var(--text-3);font-size:14px;line-height:1.55}
+.note b{color:var(--text-2);display:block;margin-bottom:3px;font-weight:600}
+
+/* ── Aviso clínico ──────────────────────────── */
+.notice{background:var(--surface);border:1px solid var(--line-soft);border-left:3px solid var(--gold);border-radius:0 16px 16px 0;padding:20px;margin:26px 0 18px}
+.notice h2{font-family:var(--serif);font-weight:700;font-size:22px;margin:0}
+.notice .lbl{font-family:var(--serif);color:var(--gold);font-size:14px;letter-spacing:.13em;text-transform:uppercase;margin:2px 0 10px}
+.notice p{margin:0;color:var(--text-3);font-size:14px;line-height:1.6}
+
+/* ── Tablas ─────────────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{
+  font-family:var(--sans);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);
+  font-weight:600;text-align:left;padding:0 10px 11px 0;border-bottom:1px solid var(--line)
+}
+.tbl td{padding:12px 10px 12px 0;border-bottom:1px solid var(--line-soft);color:var(--text-2);vertical-align:top}
+.tbl td:first-child{color:var(--text);font-weight:600}
+.tbl td.n{font-family:var(--mono);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .grp td{color:var(--text-3);font-weight:400}
+
+/* ── Datos ──────────────────────────────────── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid.three{grid-template-columns:1fr 1fr 1fr}
+label.f{display:block;font-size:11.5px;font-weight:600;color:var(--text-3);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase}
+input[type=text],input[type=date],input[type=number],select{
+  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+  font-family:var(--sans);font-size:15.5px;background:var(--surface-2);color:var(--text)
+}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 22px,calc(100% - 13px) 22px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--gold-dim);outline-offset:1px}
+input::placeholder{color:#5C6C80}
+
+.agebox{background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-top:14px}
+.agebox .lbl{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3)}
+.agebox .big{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--gold);line-height:1.1;margin:2px 0 4px}
+.agebox .sub{font-size:13.5px;color:var(--text-3);line-height:1.5}
+
+/* ── Ítems ──────────────────────────────────── */
+.posbar{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:26px 0 10px;font-weight:600}
+.posbar:first-child{margin-top:6px}
+.ex{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:15px 16px;margin-bottom:11px}
+.ex.off{opacity:.5}
+.ex-h{display:flex;align-items:flex-start;gap:10px}
+.ex-n{font-family:var(--mono);font-size:12.5px;color:var(--text-3);padding-top:3px;min-width:20px}
+.ex-h h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.25;margin:0;flex:1}
+.fchip{font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--text-3);border:1px solid var(--line);border-radius:99px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+.sc{font-family:var(--mono);font-weight:700;font-size:15px;min-width:32px;text-align:center;border-radius:8px;padding:3px 5px;background:var(--surface-2);color:var(--text-3);border:1px solid var(--line)}
+.sc.s5{background:var(--normal-bg);color:var(--normal);border-color:#265C40}
+.sc.s3{background:var(--transient-bg);color:var(--transient);border-color:#6A551E}
+.sc.s1{background:var(--abnormal-bg);color:var(--abnormal);border-color:#6B322C}
+.ex-rule{margin:9px 0 0 30px;font-size:13px;color:var(--gold);line-height:1.45}
+.ex-note{margin:9px 0 0 30px;font-size:13px;color:var(--text-3);line-height:1.5}
+.ex-annot{margin:9px 0 0 30px;font-size:12.5px;color:var(--text-3);border-left:2px solid var(--gold-dim);padding:2px 0 2px 10px;line-height:1.5}
+.ex-blocked{margin:9px 0 0 30px;font-size:13.5px;color:var(--text-3);line-height:1.5}
+.ex-blocked b{font-family:var(--mono);color:var(--text-2)}
+.opts{margin:11px 0 0 30px;display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;cursor:pointer;font-size:14.5px;line-height:1.35;background:var(--surface-2)}
+.opt:hover{border-color:var(--gold-dim)}
+.opt.sel{border-color:var(--gold);background:var(--surface-3)}
+.opt input{margin:0;accent-color:var(--gold);flex:none}
+.opt .ot{flex:1}
+.opt .ot b{font-family:var(--mono);color:var(--text-3);font-weight:600}
+.opt.sel .ot b{color:var(--gold)}
+.opt svg.ico{flex:none;width:46px;height:36px;color:var(--text-3)}
+.opt.sel svg.ico{color:var(--gold)}
+.opt .exp{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);border-radius:99px;padding:2px 7px;white-space:nowrap;flex:none}
+.flags{margin:10px 0 0 30px;display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--text-2)}
+.flags label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.flags input{accent-color:var(--abnormal)}
+
+/* ── Veredicto ──────────────────────────────── */
+.verdict{border-radius:16px;padding:20px;border:1px solid;margin-bottom:18px}
+.verdict.normal{background:var(--normal-bg);border-color:#265C40}
+.verdict.transient{background:var(--transient-bg);border-color:#6A551E}
+.verdict.abnormal{background:var(--abnormal-bg);border-color:#6B322C}
+.verdict.pend{background:var(--surface);border-color:var(--line)}
+.verdict .cls{font-family:var(--serif);font-size:27px;font-weight:700;margin:0 0 6px;line-height:1.15}
+.verdict.normal .cls{color:var(--normal)} .verdict.transient .cls{color:var(--transient)}
+.verdict.abnormal .cls{color:var(--abnormal)} .verdict.pend .cls{color:var(--text-3)}
+.verdict .meta{font-size:14.5px;color:var(--text-2);line-height:1.55}
+.verdict .meta b.big{font-family:var(--mono);font-size:19px;color:var(--text)}
+.scale{margin-top:16px}
+.scale .mk{position:relative;height:0}
+.scale .mk i{position:absolute;top:-19px;transform:translateX(-50%);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--bg);background:var(--text);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.bar{height:10px;border-radius:99px;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--text-3);margin-top:5px}
+.fbar{height:6px;background:var(--surface-3);border-radius:99px;overflow:hidden;min-width:60px}
+.fbar i{display:block;height:100%;background:var(--gold)}
+.fbar i.low{background:var(--abnormal)} .fbar i.mid{background:var(--transient)} .fbar i.hi{background:var(--normal)}
+
+/* ── Hipótesis ──────────────────────────────── */
+.hyp{border:1px solid var(--line-soft);background:var(--surface-2);border-radius:13px;padding:15px 16px;margin-bottom:11px}
+.hyp.support{border-color:#6B322C;background:#241618}
+.hyp.partial{border-color:#6A551E;background:#221C0E}
+.hyp h4{font-family:var(--serif);font-weight:700;font-size:18px;margin:0 0 3px;padding-right:110px}
+.hyp .lvl{float:right;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--text-3)}
+.hyp.support .lvl{border-color:var(--abnormal);color:var(--abnormal)}
+.hyp.partial .lvl{border-color:var(--transient);color:var(--transient)}
+.hyp ul{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--text-2)}
+.hyp li{margin-bottom:3px}
+.hyp .foot{font-size:12.5px;color:var(--text-3);margin:9px 0 0;line-height:1.5}
+
+/* ── Alertas ────────────────────────────────── */
+.alert{border-radius:13px;padding:14px 16px;margin-bottom:11px;font-size:14px;line-height:1.55;border:1px solid}
+.alert b{display:block;font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:4px}
+.alert.warn{border-color:#6A551E;background:#221C0E;color:#D8C89C}
+.alert.warn b{color:var(--transient)}
+.alert.info{border-color:var(--line);background:var(--surface-2);color:var(--text-2)}
+.alert.info b{color:var(--text)}
+.alert.conflict{border-color:#4A3A6B;background:#1C1830;color:#BDB0D6}
+.alert.conflict b{color:#B49BE8}
+
+/* ── Recomendación ──────────────────────────── */
+.rec h4{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin:22px 0 9px;font-weight:600}
+.rec ul{margin:0;padding-left:19px;font-size:14.5px;color:var(--text-2)}
+.rec li{margin-bottom:7px}
+.rec li b{color:var(--text)}
+
+/* ── Instalación y estado de red ─────────────── */
+.installbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:0 13px 13px 0;padding:14px 16px;margin:0 0 20px}
+.installbar .ib-t{flex:1;min-width:210px;font-size:13.5px;color:var(--text-2);line-height:1.5}
+.installbar .ib-t b{display:block;font-family:var(--serif);font-size:16.5px;color:var(--text);margin-bottom:3px}
+.installbar button{font-family:var(--sans);font-size:14.5px;font-weight:600;color:#1A1305;background:var(--gold);
+  border:none;border-radius:9px;padding:10px 20px;cursor:pointer;flex:none}
+.installbar button:hover{background:#F3C65C}
+.installbar.upd{border-left-color:var(--normal)}
+.toprow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.offdot{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)}
+.offdot i{width:7px;height:7px;border-radius:50%;background:var(--normal);display:block}
+.offdot.off i{background:var(--transient)}
+
+/* ── Módulo GMA ─────────────────────────────── */
+.btn-add{width:100%;font-family:var(--sans);font-size:15px;font-weight:600;color:#1A1305;background:var(--gold);border:none;border-radius:10px;padding:11px 14px;cursor:pointer}
+.btn-add:hover{background:#F3C65C}
+.chkgrp{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin:18px 0 9px;font-weight:600}
+.chkgrp:first-child{margin-top:0}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);margin-bottom:7px;cursor:pointer;font-size:14px;line-height:1.4}
+.chk:hover{border-color:var(--gold-dim)}
+.chk.on{border-color:var(--normal);background:#132A20}
+.chk input{margin:2px 0 0;accent-color:var(--normal);flex:none}
+.chk .ct{flex:1;color:var(--text-2)}
+.chk.on .ct{color:var(--text)}
+.chk .crit{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--abnormal);border:1px solid #6B322C;border-radius:99px;padding:2px 6px;flex:none;margin-top:1px}
+.chk.on .crit{color:var(--text-3);border-color:var(--line)}
+
+.traj-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);padding:12px 0}
+.traj-scroll::-webkit-scrollbar{height:6px}
+.traj-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+.traj-grid{display:inline-flex;padding:0 12px}
+.wcol{width:27px;flex:none;text-align:center;position:relative}
+.wcol.fw{background:rgba(233,185,73,.07)}
+.wcol.fwc{background:rgba(233,185,73,.17)}
+.wcol.term{box-shadow:inset 1px 0 0 var(--text-3)}
+.wlab{font-family:var(--mono);font-size:9.5px;color:var(--text-3);height:14px}
+.wcell{height:30px;margin:3px 2px 0;border-radius:6px;border:1px solid transparent;font-family:var(--mono);font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;color:transparent}
+.wcell.has{color:#0A1626}
+.wcell.n-N{background:var(--normal)}
+.wcell.n-PR,.wcell.n-Ch,.wcell.n-AF{background:var(--transient)}
+.wcell.n-CS,.wcell.n-F{background:var(--abnormal)}
+.trajlg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--text-3)}
+.trajlg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.tent{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);margin-bottom:6px;font-size:14px}
+.tent .tw{font-family:var(--mono);color:var(--gold);font-weight:700;min-width:62px}
+.tent .tk{font-family:var(--mono);font-weight:700;border-radius:5px;padding:1px 7px;color:#0A1626;flex:none}
+.tent .tn{flex:1;color:var(--text-2)}
+.tent .tx{background:none;border:none;color:var(--text-3);font-size:19px;cursor:pointer;padding:0 4px;line-height:1}
+.tent .tx:hover{color:var(--abnormal)}
+/* ── Módulo HINE ─────────────────────────────── */
+.hitem{background:var(--surface);border:1px solid var(--line-soft);border-radius:13px;padding:13px 14px;margin-bottom:9px}
+.hitem.zero{opacity:.62}
+.hitem-h{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+.hitem-h .ex-n{padding-top:2px}
+.hitem-h h4{font-family:var(--serif);font-weight:700;font-size:16.5px;line-height:1.25;margin:0;flex:1}
+.hopt{margin:0 0 9px 30px;font-size:12.5px;color:var(--text-3);line-height:1.45}
+.hopt b{color:var(--gold);font-weight:600}
+.seg{display:flex;gap:5px;margin-left:30px}
+.seg button{flex:1;font-family:var(--mono);font-size:14px;font-weight:700;padding:9px 0;border-radius:9px;
+  border:1px solid var(--line);background:var(--surface-2);color:var(--text-3);cursor:pointer}
+.seg button:hover{border-color:var(--gold-dim)}
+.seg button.on{border-color:var(--gold);background:var(--gold);color:#1A1305}
+.seg button.on.s0{background:var(--abnormal);border-color:var(--abnormal);color:#2A0F0C}
+.seg button.on.s1{background:#C97F30;border-color:#C97F30;color:#2A1A05}
+.seg button.on.s3{background:var(--normal);border-color:var(--normal);color:#08210F}
+.seg button.on.sna{background:var(--surface-3);border-color:var(--line);color:var(--text-2)}
+.seg button.na{font-size:12px}
+.hasym{margin:9px 0 0 30px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--text-2)}
+.hasym label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.hasym input{accent-color:var(--abnormal)}
+.hside{margin:9px 0 0 30px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hside .sl{font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.1em;min-width:16px}
+.hside .seg{margin-left:0;flex:1;min-width:170px}
+.hlock{margin:0 0 0 30px;font-size:12.5px;color:var(--transient);line-height:1.45}
+.mile{display:grid;grid-template-columns:1fr 118px;gap:9px;align-items:end;margin-bottom:10px}
+.beh{margin-bottom:10px}
+.asymbox{background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:15px 16px;margin-top:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.asymbox .av{font-family:var(--serif);font-size:34px;font-weight:700;color:var(--gold);line-height:1}
+.asymbox .at{flex:1;min-width:200px;font-size:13.5px;color:var(--text-2);line-height:1.5}
+.asymbox .al{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3)}
+
+.rail{position:fixed;left:0;right:0;bottom:0;background:#081120;border-top:1px solid var(--line);z-index:40;
+  padding:9px 0 calc(11px + env(safe-area-inset-bottom))}
+.rail .wrap{display:flex;gap:7px}
+.fbox{flex:1;background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;padding:6px 4px 7px;text-align:center;position:relative;overflow:hidden}
+.fbox .fill{position:absolute;left:0;bottom:0;width:100%;background:#22406A;transition:height .25s ease}
+.fbox .fr{position:relative}
+.fbox .rn{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;color:var(--text-3)}
+.fbox .rv{font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.05}
+.fbox .rl{font-size:8.5px;color:var(--text-3);line-height:1.15;margin-top:2px}
+.totbox{flex:1.45;background:var(--gold);color:#1A1305;border-radius:10px;padding:6px 6px 7px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.totbox.pend{background:var(--surface);color:var(--text-3);border:1px solid var(--line)}
+.totbox .rn{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;opacity:.75}
+.totbox .rv{font-family:var(--serif);font-size:23px;font-weight:700;line-height:1.05}
+.totbox .rv small{font-size:12px;opacity:.6}
+.totbox .rl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
+
+footer{border-top:1px solid var(--line);margin-top:30px;padding:20px 0 28px;font-size:13px;color:var(--text-3);line-height:1.6}
+footer b{color:var(--text-2);font-weight:600}
+
+@media(max-width:540px){
+  .mile{grid-template-columns:1fr}
+  .seg button{font-size:13px;padding:8px 0}
+  .grid,.grid.three{grid-template-columns:1fr}
+  h1{font-size:28px}
+  .card{padding:16px}
+  .opt svg.ico{width:42px;height:33px}
+  .hyp h4{padding-right:0}
+  .hyp .lvl{float:none;display:inline-block;margin-bottom:6px}
+}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  header,.card,.subcard,.notice,.verdict,.hyp,.alert,.note{background:#fff!important;border-color:#bbb!important;color:#000}
+  h1,.card>h2,.ex-h h3,.verdict .cls,.hyp h4,.alert b{color:#000!important}
+  .crumb b,.card>h2 em,h1 em,.posbar,.ex-rule,.rec h4,.notice .lbl,.opt .exp{color:#6B5307!important}
+  .lead,.srcline,.sub,.tbl td,.hyp ul,.rec ul,.notice p,.note{color:#333!important}
+  .panel{display:block!important}
+  .tabs,.btn-reset,.rail,.noprint{display:none!important}
+  .opt{display:none}
+  .opt.sel{display:flex;border:none;background:none;padding:2px 0}
+  .opt.sel input{display:none}
+  .chk{display:none} .chk.on{display:flex;border:none;background:none;padding:2px 0} .chk.on input{display:none}
+  .tent .tx,.btn-add{display:none} .traj-scroll{overflow:visible}
+  .seg button{display:none} .seg button.on{display:block;border:1px solid #999;background:#eee!important;color:#000!important}
+  .hitem.zero{display:none}
+  .opt svg.ico{color:#000!important}
+  .ex.off{display:none}
+  .card{break-inside:avoid}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="crumb"><b>CSS PANAMÁ</b> / Neonatología · Neurodesarrollo</div>
+    <div class="rule-t"></div>
+    <h1>Navegador <em>INFANIB</em></h1>
+    <p class="lead">Ayuda a la decisión a pie de cama para la evaluación neuromotora del lactante. Introduzca la edad corregida y la respuesta de cada ítem; la herramienta aplica la regla que corresponde a esa edad, suma por factor y muestra la clasificación de Ellison con su recomendación de seguimiento.</p>
+    <p class="srcline">Basado en: Ellison PH. <i>Manual INFANIB</i>. Bloomington: PsychCorp / NCS Pearson, 1994. Y en: Ellison PH, Horn JL, Browning CA. Construction of an Infant Neurological International Battery. <i>Phys Ther</i> 1985;65(9):1326–31.</p>
+    <div id="installBar" class="installbar" hidden>
+      <div class="ib-t"><b id="ibTitle"></b><span id="ibMsg"></span></div>
+      <button id="ibBtn" hidden onclick="doInstall()">Instalar</button>
+    </div>
+    <div class="toprow" style="margin-bottom:20px">
+      <button class="btn-reset" style="margin-bottom:0" onclick="resetAll()">Reiniciar</button>
+      <span class="offdot" id="netDot"><i></i><span id="netTxt">Sin conexión requerida</span></span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-t="eval" class="on" onclick="setTab('eval')">Evaluación</button>
+      <button data-t="gma" onclick="setTab('gma')">GMA · trayectoria</button>
+      <button data-t="hine" onclick="setTab('hine')">HINE</button>
+      <button data-t="res" onclick="setTab('res')">Resultado</button>
+      <button data-t="cut" onclick="setTab('cut')">Puntos de corte</button>
+      <button data-t="ev" onclick="setTab('ev')">Evidencia</button>
+      <button data-t="src" onclick="setTab('src')">Procedencia</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ══ EVALUACIÓN ══ -->
+<div class="panel on" data-p="eval">
+  <div class="card">
+    <h2>Datos del <em>lactante</em></h2>
+    <p class="sub">La edad corregida define qué ítems se puntúan, qué regla aplica a cada uno y qué punto de corte se usa. Es el dato que gobierna toda la evaluación.</p>
+    <div class="grid">
+      <div><label class="f" for="pname">Nombre o registro</label><input type="text" id="pname" placeholder="Iniciales / expediente"></div>
+      <div><label class="f" for="pexam">Fecha del examen</label><input type="date" id="pexam"></div>
+    </div>
+    <div class="grid three" style="margin-top:12px">
+      <div><label class="f" for="pdob">Fecha de nacimiento</label><input type="date" id="pdob"></div>
+      <div><label class="f" for="pegw">EG al nacer · sem</label><input type="number" id="pegw" min="22" max="42" step="1" placeholder="30"></div>
+      <div><label class="f" for="pegd">EG al nacer · días</label><input type="number" id="pegd" min="0" max="6" step="1" placeholder="0–6"></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div><label class="f" for="pmanual">Edad corregida directa (meses)</label><input type="number" id="pmanual" min="0" max="18" step="0.1" placeholder="Opcional — sobrescribe el cálculo"></div>
+      <div><label class="f" for="pver">Versión del instrumento</label>
+        <select id="pver">
+          <option value="1994">Manual de Ellison, 1994</option>
+          <option value="1985">Formulario original, Physical Therapy 1985</option>
+        </select>
+      </div>
+    </div>
+    <div class="agebox">
+      <div class="lbl">Edad corregida</div>
+      <div class="big" id="ageBig">—</div>
+      <div class="sub" id="ageSub">Ingrese fecha de nacimiento, EG al nacer y fecha de examen, o escriba la edad corregida directamente.</div>
+    </div>
+    <div id="ageWarn"></div>
+    <div class="note">Las dos versiones publicadas difieren únicamente en el ítem 6 y solo por debajo de los 3 meses de edad corregida. Todo lo demás — los veinte ítems, las edades de inicio, los cambios mayores de regla y los tres juegos de puntos de corte — es idéntico.</div>
+  </div>
+
+  <div class="card">
+    <h2>Evaluación por <em>ítems</em></h2>
+    <p class="sub">Los veinte ítems en el orden de exploración del formulario original. En los ítems de ángulo la figura se genera a partir del valor real del rango, de modo que la geometría es exacta. Cada opción muestra el puntaje que produce a la edad ingresada, y la etiqueta dorada marca la respuesta esperada para el desarrollo típico.</p>
+    <div id="itemHost"></div>
+  </div>
+</div>
+
+<!-- ══ GMA ══ -->
+<div class="panel" data-p="gma">
+  <div class="card">
+    <h2>Movimientos generales · método de <em>Prechtl</em></h2>
+    <p class="sub">Módulo hermano para la ventana en la que el INFANIB rinde peor. Valora la <b>calidad</b> del movimiento espontáneo por juicio global sobre video, no su cantidad. Se registra la trayectoria a lo largo de varias edades, porque la predicción solo se vuelve sólida cuando el hallazgo anormal es consistente en el tiempo.</p>
+    <p class="srcline" style="margin-bottom:0">Basado en: Einspieler C, Prechtl HFR, Ferrari F, Cioni G, Bos AF. The qualitative assessment of general movements in preterm, term and young infants — review of the methodology. <i>Early Hum Dev</i> 1997;50:47–60.</p>
+    <div id="gmaBridge"></div>
+  </div>
+
+  <div class="card">
+    <h2>Requisitos de <em>grabación y análisis</em></h2>
+    <p class="sub">Es donde el método se rompe en la práctica. En el estudio de fiabilidad, todos los acuerdos interobservador por debajo del 75 % se explicaron por secuencias demasiado cortas y procedimiento de grabación no óptimo. Los ítems marcados como críticos condicionan la interpretabilidad del juicio.</p>
+    <div id="gmaCheckHost"></div>
+    <div id="gmaValid"></div>
+  </div>
+
+  <div class="card">
+    <h2>Trayectoria del <em>desarrollo</em></h2>
+    <p class="sub">Registre un juicio global por cada grabación, en semanas de edad postmenstrual. Cinta resumen óptima: una semanal durante el periodo prematuro, una a término, una entre las 3 y 6 semanas post-término, y al menos una — preferible dos o tres — durante la expresión plena de los movimientos <i>fidgety</i>.</p>
+    <div class="grid three" style="margin-bottom:12px">
+      <div><label class="f" for="gwk">Edad postmenstrual (sem)</label><input type="number" id="gwk" min="30" max="60" step="1" placeholder="p. ej. 50"></div>
+      <div><label class="f" for="gnot">Juicio global</label>
+        <select id="gnot">
+          <option value="N">N · Normal</option>
+          <option value="PR">PR · Repertorio pobre</option>
+          <option value="CS">CS · Rígidos-sincronizados</option>
+          <option value="Ch">Ch · Caóticos</option>
+          <option value="AF">AF · Fidgety anormales</option>
+          <option value="F-">F− · Fidgety ausentes</option>
+        </select>
+      </div>
+      <div><label class="f" style="visibility:hidden">Añadir</label>
+        <button class="btn-add" onclick="addGma()">Añadir a la trayectoria</button></div>
+    </div>
+    <div id="trajHost"></div>
+    <div id="trajList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Lectura de la <em>trayectoria</em></h2>
+    <div id="gmaVerdict"></div>
+  </div>
+
+  <div class="card">
+    <h2>Definiciones de <em>consenso</em></h2>
+    <p class="sub">Reproducidas del consenso de investigadores recogido en el artículo de metodología.</p>
+    <div class="subcard"><h4>GM normal</h4><p class="kicker">Todo el rango de edad</p>
+      <p>Movimientos gruesos que involucran todo el cuerpo, de segundos a varios minutos. Secuencia variable de brazos, piernas, cuello y tronco; crecen y decrecen en intensidad, fuerza y velocidad; inicio y final graduales. Las secuencias de extensión y flexión son complejas, con rotaciones superpuestas y ligeros cambios de dirección, lo que las hace fluidas y elegantes y crea la impresión de complejidad y variabilidad.</p></div>
+    <div class="subcard"><h4><i>Writhing</i> · de retorcimiento</h4><p class="kicker">Edad de término y primeros meses post-término</p>
+      <p>Amplitud pequeña a moderada y velocidad lenta a moderada. Ocasionalmente irrumpen movimientos extensores rápidos y amplios, sobre todo en los brazos. Forma típicamente elíptica, de donde procede la impresión de retorcimiento.</p></div>
+    <div class="subcard"><h4><i>Fidgety</i> · FM</h4><p class="kicker">De 6 a 20 semanas post-término</p>
+      <p>Movimientos circulares de pequeña amplitud, velocidad moderada y aceleración variable, de cuello, tronco y extremidades en todas direcciones. Continuos en el lactante despierto salvo durante la atención focalizada. Pueden coincidir con pataleo, oscilación, barrido de brazos o «ráfagas de placer». Aparecen desde las 6 semanas, habitualmente hacia las 9, y persisten hasta las 15 y como máximo 20. El mismo rango vale para el prematuro tras corregir la edad. Su curso es en campana: eventos aislados, aumento de frecuencia, descenso.</p></div>
+    <div class="subcard"><h4>PR · Repertorio pobre</h4><p class="kicker">Anormal — prematuro, término y primeros 2 meses</p>
+      <p>La secuencia de componentes sucesivos del movimiento es monótona, y los movimientos de las distintas partes del cuerpo no ocurren con la complejidad que se ve en los GM normales.</p></div>
+    <div class="subcard"><h4>CS · Rígidos-sincronizados</h4><p class="kicker">Anormal — el de mayor peso predictivo</p>
+      <p>Aparecen rígidos y carecen del carácter suave y fluido normal; todos los músculos de las extremidades y del tronco se contraen y se relajan casi simultáneamente.</p></div>
+    <div class="subcard"><h4>Ch · Caóticos</h4><p class="kicker">Anormal</p>
+      <p>Los movimientos de todas las extremidades son de gran amplitud y ocurren en orden caótico, sin fluidez ni suavidad. Aparecen consistentemente abruptos.</p></div>
+    <div class="subcard"><h4>AF · Fidgety anormales</h4><p class="kicker">Anormal — en la ventana fidgety</p>
+      <p>Se parecen a los fidgety normales, pero su amplitud, velocidad y brusquedad están moderada o marcadamente exageradas.</p></div>
+    <div class="subcard"><h4>F− · Fidgety ausentes</h4><p class="kicker">Anormal — el hallazgo de mayor valor pronóstico</p>
+      <p>Nunca se observan movimientos fidgety entre las 6 y las 20 semanas post-término. Otros movimientos sí pueden observarse con normalidad.</p></div>
+    <div class="note"><b>Orden de los pasos</b>El primer paso del juicio debe ocuparse únicamente de identificar normal frente a anormal. Solo después se especifica el tipo de anormalidad. El análisis detallado por criterios y el <i>motor optimality score</i> son siempre un segundo paso y nunca sustituyen al juicio global: se pierde demasiado Gestalt al enfocarse en el detalle.</div>
+  </div>
+
+  <div class="card">
+    <h2>Rendimiento por <em>época de edad</em></h2>
+    <p class="sub">Sensibilidad y especificidad recogidas en seis estudios. La sensibilidad es alta en todas las edades; la especificidad depende de la edad.</p>
+    <table class="tbl">
+      <thead><tr><th>Época</th><th>Sensibilidad</th><th>Especificidad</th></tr></thead>
+      <tbody>
+        <tr><td>≤ 37 sem EPM</td><td class="n">60 – 100 %</td><td class="n">58 – 59 %</td></tr>
+        <tr><td>38 – 42 sem EPM</td><td class="n">94 – 100 %</td><td class="n">46 – 65 %</td></tr>
+        <tr><td>43 – 47 sem EPM</td><td class="n">80 – 100 %</td><td class="n">67 – 86 %</td></tr>
+        <tr><td>≥ 48 sem EPM<br><span style="color:var(--text-3);font-weight:400">tercer mes post-término</span></td><td class="n">85 – 100 %</td><td class="n">82 – 100 %</td></tr>
+        <tr><td>Global</td><td class="n">Mediana 94.5 %<br>(60 – 100 %)</td><td class="n">Mediana 85 % en el tercer mes</td></tr>
+      </tbody>
+    </table>
+    <div class="alert conflict" style="margin-top:14px"><b>La baja especificidad temprana no son falsos positivos</b>Se debe al número consistente de lactantes con GM anormales — sobre todo repertorio pobre — que se normalizan antes o durante la edad fidgety y tienen desenlace normal. Son anormalidades reales aunque transitorias, que desaparecen con la gran transformación neural del tercer mes. Si persisten más allá de esa edad, la probabilidad de remisión espontánea se vuelve pequeña.</div>
+    <h3 class="sec">La serie de referencia</h3>
+    <table class="tbl">
+      <thead><tr><th>Hallazgo</th><th>Desenlace a 2 años</th></tr></thead>
+      <tbody>
+        <tr><td>Fidgety normales</td><td class="n">96 % desenlace neurológico normal</td></tr>
+        <tr><td>Fidgety ausentes o anormales</td><td class="n">95 % anormalidad neurológica<br>82 % parálisis cerebral<br>13 % retraso del desarrollo y signos menores</td></tr>
+        <tr><td>Rendimiento global de los FM</td><td class="n">S 95 % · E 96 %</td></tr>
+        <tr><td>Ecografía cerebral al tercer mes<br><span style="color:var(--text-3);font-weight:400">misma cohorte, para comparación</span></td><td class="n">S 80 % · E 83 %</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Prechtl et al. 1997, 130 lactantes pre-término y de término. La evaluación de los fidgety al tercer mes superó a la ecografía cerebral, y la GMA superó al examen neurológico tradicional tanto en prematuros como en nacidos a término.</div>
+  </div>
+
+  <div class="card">
+    <h2>Fiabilidad del <em>juicio</em></h2>
+    <table class="tbl">
+      <thead><tr><th>Medida</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Clasificación de patrones motores</td><td class="n">κ 0.91, replicado en 0.92</td></tr>
+        <tr><td>Juicio global, nueve estudios<br><span style="color:var(--text-3);font-weight:400">207 lactantes · 80 observadores</span></td><td class="n">78 – 98 %</td></tr>
+        <tr><td>Acuerdo global del estudio propio<br><span style="color:var(--text-3);font-weight:400">46 observadores · 30 casos</span></td><td class="n">87 %<br>normales 89 % · anormales 85 %</td></tr>
+        <tr><td>CS · rígidos-sincronizados</td><td class="n">89 % (56 – 100 %, 9 casos)</td></tr>
+        <tr><td>PR · repertorio pobre</td><td class="n">83 % (62 – 93 %, 5 casos)</td></tr>
+        <tr><td>AF · fidgety anormales</td><td class="n">78 % (62 – 100 %, 4 casos)</td></tr>
+        <tr><td>Test-retest a 2 años de intervalo</td><td class="n">85 % idénticos; el resto difirió en 1 punto</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>El AF es la categoría menos reproducible</b>Su acuerdo del 78 % descansa sobre cuatro casos únicamente. Trate un juicio de fidgety anormales con más cautela que uno de ausentes o de rígidos-sincronizados.</div>
+  </div>
+</div>
+
+<!-- ══ HINE ══ -->
+<div class="panel" data-p="hine">
+  <div class="card">
+    <h2>Examen Neurológico Infantil de <em>Hammersmith</em></h2>
+    <p class="sub">Complemento de puntuación e interpretación para el HINE. Veintiséis ítems en cinco dominios, con un máximo de 78. Toma el relevo desde los 3 meses de edad corregida, cuando la ventana <i>fidgety</i> se agota y el INFANIB aún no alcanza su mejor rendimiento.</p>
+    <p class="srcline" style="margin-bottom:0">Basado en: Haataja L, Mercuri E, Regev R, et al. Optimality score for the neurologic examination of the infant at 12 and 18 months of age. <i>J Pediatr</i> 1999;135:153–61. Puntos de corte tomados de las notas de orientación oficiales, actualización del 20 de diciembre de 2023 (Cowan, Martinez Biarge, Vollmer, Haataja).</p>
+    <div id="hineBridge"></div>
+  </div>
+
+  <div class="notice" style="margin:18px 0">
+    <h2>Forma de uso y licencia</h2>
+    <div class="lbl">Léase antes de usar</div>
+    <p>Este módulo <b>no reproduce ni sustituye la proforma oficial</b>, que es propiedad de Mac Keith Press y cuyo contenido y sistema de puntuación no deben modificarse. El examen se realiza y se marca sobre la proforma oficial; aquí se introduce el puntaje resultante de cada ítem para obtener los subtotales por dominio, el recuento de asimetrías y la lectura de los puntos de corte publicados. De cada ítem se muestra únicamente el anclaje del puntaje óptimo, como recordatorio.<br><br>La proforma, las notas de orientación y el curso de formación en video están disponibles en mackeith.co.uk/hammersmith-neurological-examinations. Para uso institucional en la CSS conviene verificar el estado de licencia con Prof. Frances Cowan o Prof. Eugenio Mercuri. El examen está validado de los 3 a los 18 meses; no lo está en cohortes amplias de síndromes genéticos, enfermedades metabólicas, trastornos neuromusculares congénitos ni cardiopatía congénita.</p>
+  </div>
+
+  <div class="card">
+    <h2>Sección 1 · Examen <em>neurológico</em></h2>
+    <p class="sub">Puntaje 3 óptimo, 0 el peor. La regla del 2: si la respuesta no es óptima pero no es lo bastante pobre para puntuar 1, se da 2. Si la respuesta es asimétrica y cae en dos columnas distintas, se marca cada lado y se promedia, lo que produce puntajes fraccionarios. Deje sin puntuar el ítem que no pudo evaluar.</p>
+    <div id="hineHost"></div>
+    <div id="hineAsym"></div>
+  </div>
+
+  <div class="card">
+    <h2>Puntaje <em>global</em></h2>
+    <div id="hineResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>Lectura de los <em>puntos de corte</em></h2>
+    <div id="hineVerdict"></div>
+  </div>
+
+  <div class="card">
+    <h2>Sección 2 · Hitos motores <span style="font-size:15px;color:var(--text-3);font-family:var(--sans);font-weight:400">— no puntúan</span></h2>
+    <p class="sub">Registro del desarrollo motor y de la edad a la que se alcanzó cada habilidad. Anote asimetrías y el lado: si el niño rueda hacia ambos lados, si reptó, si se desplazó sentado.</p>
+    <div id="mileHost"></div>
+  </div>
+
+  <div class="card">
+    <h2>Sección 3 · <em>Conducta</em> <span style="font-size:15px;color:var(--text-3);font-family:var(--sans);font-weight:400">— no puntúa</span></h2>
+    <p class="sub">Máximo 15 puntos. La información es importante y útil, pero queda expresamente fuera del puntaje global del HINE. Sirve para juzgar en qué condiciones se realizó el examen.</p>
+    <div id="behHost"></div>
+  </div>
+
+  <div class="card">
+    <h2>Puntos de corte <em>publicados</em></h2>
+    <p class="sub">Todos proceden de las notas de orientación oficiales salvo donde se indica otra fuente. Se muestran separados por finalidad, porque los umbrales de optimalidad, de pronóstico motor y de riesgo de parálisis cerebral se solapan pero no coinciden.</p>
+    <h3 class="sec">Optimalidad</h3>
+    <table class="tbl">
+      <thead><tr><th>Edad corregida</th><th>Puntaje óptimo</th><th>Fuente</th></tr></thead>
+      <tbody>
+        <tr><td>3 meses</td><td class="n">≈ 65 (rango 62 – 69)</td><td>Notas oficiales 2023</td></tr>
+        <tr><td>3 meses</td><td class="n">≥ 67</td><td>Romeo 2016, revisión crítica</td></tr>
+        <tr><td>6 meses</td><td class="n">≥ 70</td><td>Romeo 2016</td></tr>
+        <tr><td>6 – 7 meses</td><td class="n">Alcanza el rango del lactante mayor</td><td>Notas oficiales 2023</td></tr>
+        <tr><td>9 – 12 meses</td><td class="n">≥ 73</td><td>Romeo 2016</td></tr>
+        <tr><td>12 meses, nacido a término</td><td class="n">&gt; 72</td><td>Haataja 1999</td></tr>
+        <tr><td>18 meses</td><td class="n">&gt; 73</td><td>Haataja 1999</td></tr>
+      </tbody>
+    </table>
+    <div class="alert conflict" style="margin-top:14px"><b>Discordancia que se preserva</b>A los 3 meses las notas oficiales sitúan la optimalidad en torno a 65 con rango de 62 a 69, mientras la revisión de Romeo 2016 la fija en 67 o más. Son fuentes de los mismos grupos autores y no coinciden. El módulo muestra las dos y no elige.</div>
+
+    <h3 class="sec">Riesgo de parálisis cerebral</h3>
+    <table class="tbl">
+      <thead><tr><th>Umbral</th><th>Lectura</th><th>Fuente</th></tr></thead>
+      <tbody>
+        <tr><td class="n">&lt; 57 a los 3 meses EC</td><td>Altamente predictivo de parálisis cerebral bilateral</td><td>Notas oficiales 2023</td></tr>
+        <tr><td class="n">&lt; 58 a los 3 meses EC</td><td>Predice parálisis cerebral · S 79.6 % · E 88.7 %<br><span style="color:var(--text-3)">metanálisis de 21 estudios, 7299 lactantes</span></td><td>Kuo et al., <i>Dev Med Child Neurol</i></td></tr>
+        <tr><td class="n">&lt; 66 a los 12 meses EC</td><td>Altamente predictivo de parálisis cerebral bilateral</td><td>Notas oficiales 2023</td></tr>
+        <tr><td class="n">&lt; 73 después de los 5 meses</td><td>Sitúa al niño en riesgo de parálisis cerebral, incluyendo todos los tipos y severidades</td><td>Notas oficiales 2023</td></tr>
+        <tr><td class="n">&lt; 40</td><td>Casi siempre indica parálisis cerebral grave</td><td>Notas oficiales 2023</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Dos advertencias de las propias notas</b>En el prematuro extremo a los 3 meses los puntajes que predicen parálisis cerebral pueden ser más bajos que estos umbrales: la mediana en lactantes con buen desenlace a 2 años se reporta en 58, con rango de 47 a 69 (Romeo 2022). Y los niños que desarrollan parálisis cerebral unilateral pueden no tener puntajes bajos — para esa forma el recuento de asimetrías pesa más que el puntaje global.</div>
+
+    <h3 class="sec">Pronóstico motor a los 6 – 9 meses</h3>
+    <table class="tbl">
+      <thead><tr><th>Puntaje</th><th>Asociación</th></tr></thead>
+      <tbody>
+        <tr><td class="n">&gt; 66 (término)<br>&gt; 60 – 64 (prematuro)</td><td>Marcha independiente</td></tr>
+        <tr><td class="n">&gt; 40 – 60</td><td>Sedestación independiente, pero la mayoría no camina a los 2 años</td></tr>
+        <tr><td class="n">40 – 66 en encefalopatía hipóxico-isquémica de término</td><td>Solo el 13 % caminó de forma independiente a los 2 años; 25 % a los 4 años (Haataja 2001)</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sec">Asimetrías</h3>
+    <div class="note"><b>Salida independiente del puntaje</b>Hay K et al. (<i>Pediatr Neurol</i> 2018) reportaron que tener más de 5 ítems con respuesta asimétrica se asoció a parálisis cerebral unilateral. Advertencia de las notas oficiales: en ese estudio la mediana de edad era de 15 meses, cuando una hemiplejía ya suele ser clínicamente evidente, y las asimetrías pequeñas no son infrecuentes en los primeros meses. Registre además qué sitios fueron asimétricos y si la lateralidad fue consistente.</div>
+  </div>
+</div>
+
+<!-- ══ RESULTADO ══ -->
+<div class="panel" data-p="res">
+  <div class="card">
+    <h2>Puntaje y <em>clasificación</em></h2>
+    <div id="resultHost"></div>
+  </div>
+  <div class="card">
+    <h2>Perfil por <em>factores</em></h2>
+    <p class="sub">Un total puede ocultar un perfil disociado. Un puntaje limítrofe con un factor colapsado no significa lo mismo que uno repartido de forma pareja.</p>
+    <div id="factorHost"></div>
+  </div>
+  <div class="card">
+    <h2>Hipótesis de <em>patrón topográfico</em></h2>
+    <p class="sub">El formulario original pide elegir una categoría solo si el resultado es anormal, y esa elección es clínica, no aritmética. Las cuatro se muestran en paralelo con la evidencia que cada una tiene a favor en esta evaluación.</p>
+    <div id="patternHost"></div>
+  </div>
+  <div class="card">
+    <h2>Zonas de <em>incertidumbre</em></h2>
+    <div id="uncertHost"></div>
+  </div>
+  <div class="card rec">
+    <h2>Recomendación de <em>seguimiento</em></h2>
+    <p class="sub">Dos capas separadas y etiquetadas: lo que indica el manual original y lo que añade la evidencia posterior sobre detección temprana. No se fusionan.</p>
+    <div id="recHost"></div>
+  </div>
+</div>
+
+<!-- ══ PUNTOS DE CORTE ══ -->
+<div class="panel" data-p="cut">
+  <div class="card">
+    <h2>Grado de normalidad según el <em>puntaje total</em></h2>
+    <p class="sub">Los tres juegos de cortes son idénticos en las versiones de 1985 y 1994. Ya están calibrados para el hecho de que varios ítems no se puntúan a edades tempranas, por lo que el total nunca debe reescalarse a 100.</p>
+    <table class="tbl">
+      <thead><tr><th>Banda de edad corregida</th><th>Anormal</th><th>Transitorio</th><th>Normal</th></tr></thead>
+      <tbody>
+        <tr><td>Menos de 4 meses</td><td class="n">≤ 48</td><td class="n">49 – 65</td><td class="n">≥ 66</td></tr>
+        <tr><td>4 a 8 meses</td><td class="n">≤ 54</td><td class="n">55 – 71</td><td class="n">≥ 72</td></tr>
+        <tr><td>8 meses o más</td><td class="n">≤ 68</td><td class="n">69 – 82</td><td class="n">≥ 83</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Solapamiento en 8.0 – 8.9 meses</b>El formulario imprime «4 a 8 meses» y «8 meses o más», de modo que esa franja pertenece literalmente a las dos bandas. La herramienta aplica la banda de ≥8 meses, que es la más exigente, y muestra el resultado alternativo cuando difiere.</div>
+  </div>
+
+  <div class="card">
+    <h2>Techo alcanzable por <em>edad</em></h2>
+    <p class="sub">Seis ítems no se puntúan antes de su edad de inicio y aportan cero. El máximo posible depende por tanto de la edad corregida.</p>
+    <table class="tbl">
+      <thead><tr><th>Edad corregida</th><th>Ítems no puntuados</th><th>Máximo</th></tr></thead>
+      <tbody>
+        <tr><td class="n">0 – 2.9 m</td><td>11, 12, 16, 17, 19, 20</td><td class="n">70</td></tr>
+        <tr><td class="n">3 – 3.9 m</td><td>11, 12, 16, 17, 20</td><td class="n">75</td></tr>
+        <tr><td class="n">4 – 5.9 m</td><td>12, 16, 17, 20</td><td class="n">80</td></tr>
+        <tr><td class="n">6 – 6.9 m</td><td>12, 17, 20</td><td class="n">85</td></tr>
+        <tr><td class="n">7 – 8.9 m</td><td>12, 17</td><td class="n">90</td></tr>
+        <tr><td class="n">≥ 9 m</td><td>ninguno</td><td class="n">100</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Medias de referencia a <em>6 meses</em></h2>
+    <p class="sub">Tabla 3.3 del manual. Datos de Stavrakas et al.: 5 normales, 60 transitorios, 17 anormales.</p>
+    <table class="tbl">
+      <thead><tr><th>Grupo</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>V</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>Normal</td><td class="n">18.6</td><td class="n">16.4</td><td class="n">7.2</td><td class="n">15.6</td><td class="n">17.6</td><td class="n">75.4</td></tr>
+        <tr><td>Transitorio</td><td class="n">18.1</td><td class="n">14.7</td><td class="n">4.5</td><td class="n">13.1</td><td class="n">14.4</td><td class="n">64.8</td></tr>
+        <tr><td>Anormal</td><td class="n">12.8</td><td class="n">8.7</td><td class="n">3.9</td><td class="n">11.1</td><td class="n">10.0</td><td class="n">46.6</td></tr>
+      </tbody>
+    </table>
+    <h3 class="sec">Medias de referencia a 12 meses</h3>
+    <p class="sub">Tabla 3.4 del manual: 47 normales, 15 transitorios, 20 anormales.</p>
+    <table class="tbl">
+      <thead><tr><th>Grupo</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>V</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>Normal</td><td class="n">19.9</td><td class="n">19.4</td><td class="n">19.3</td><td class="n">18.7</td><td class="n">18.4</td><td class="n">95.7</td></tr>
+        <tr><td>Transitorio</td><td class="n">18.9</td><td class="n">14.3</td><td class="n">15.1</td><td class="n">14.7</td><td class="n">14.5</td><td class="n">77.4</td></tr>
+        <tr><td>Anormal</td><td class="n">15.5</td><td class="n">9.8</td><td class="n">7.4</td><td class="n">10.5</td><td class="n">9.8</td><td class="n">52.9</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Son muestras pequeñas y de un solo centro. Sirven para orientar la lectura del perfil, no como valores normativos poblacionales.</div>
+  </div>
+</div>
+
+<!-- ══ EVIDENCIA ══ -->
+<div class="panel" data-p="ev">
+  <div class="card">
+    <h2>Rendimiento diagnóstico del <em>INFANIB</em></h2>
+    <p class="sub">Las cifras provienen de estudios de validación con poblaciones, edades y patrones de referencia distintos, por lo que no son directamente comparables entre sí.</p>
+    <table class="tbl">
+      <thead><tr><th>Estudio</th><th>Edad</th><th>Rendimiento</th></tr></thead>
+      <tbody>
+        <tr><td>Soleimani 2007<br><span style="color:var(--text-3);font-weight:400">Irán · 6150 lactantes</span></td><td class="n">4 – 18 m</td><td class="n">S 90 % · E 83 %<br>VPP 79 % · VPN 93 %<br>CCI 0.90</td></tr>
+        <tr><td>Charpak 2016<br><span style="color:var(--text-3);font-weight:400">Bogotá · 5857 lactantes<br>programa Madre Canguro</span></td><td class="n">3 m EC</td><td class="n">S 62.2 % · E 76.1 %<br>ROC 0.69</td></tr>
+        <tr class="grp"><td></td><td class="n">6 m EC</td><td class="n">S 77.5 % · E 74.4 %<br>ROC 0.76</td></tr>
+        <tr class="grp"><td></td><td class="n">9 m EC</td><td class="n">S 77.2 % · E 91.1 %</td></tr>
+        <tr><td>Liao 2012<br><span style="color:var(--text-3);font-weight:400">China · prematuros de riesgo</span></td><td class="n">3 y 7 m</td><td>Validez predictiva baja</td></tr>
+        <tr class="grp"><td></td><td class="n">10 m</td><td>Validez predictiva alta</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Lectura por edad</b>La especificidad mejora de forma marcada hacia los 9 y 10 meses de edad corregida. Un resultado normal antes de los 6 meses no descarta parálisis cerebral. La cohorte colombiana es la más pertinente para el contexto latinoamericano por población, sistema de seguimiento y tamaño.</div>
+  </div>
+
+  <div class="card">
+    <h2>Vías de <em>detección temprana</em></h2>
+    <p class="sub">Contexto en el que se inserta el INFANIB. Las guías de detección temprana de parálisis cerebral no lo incluyen entre sus instrumentos recomendados; su papel es el de tamizaje de seguimiento cuando estas pruebas no están disponibles.</p>
+    <table class="tbl">
+      <thead><tr><th>Prueba</th><th>Ventana</th><th>Rendimiento</th></tr></thead>
+      <tbody>
+        <tr><td>Movimientos generales de Prechtl (GMA)</td><td class="n">&lt; 5 m EC</td><td>La ausencia de movimientos <i>fidgety</i> es altamente predictiva</td></tr>
+        <tr><td>Examen neurológico de Hammersmith (HINE)</td><td class="n">≥ 3 m</td><td>Examen neurológico estandarizado y puntuable</td></tr>
+        <tr><td>Neuroimagen (RM preferente)</td><td class="n">Término</td><td>Sustrato lesional</td></tr>
+        <tr><td>Las tres combinadas<br><span style="color:var(--text-3);font-weight:400">Morgan 2019</span></td><td class="n">—</td><td class="n">S 97.86 % · E 99.22 %<br>VPP 98.56 % · VPN 98.84 %</td></tr>
+      </tbody>
+    </table>
+    <div class="note">El diagnóstico o la designación de «alto riesgo de parálisis cerebral» de forma temprana habilita la intervención dentro de la ventana de mayor neuroplasticidad (Novak 2017).</div>
+  </div>
+
+  <div class="card">
+    <h2>Historia natural del grupo <em>transitorio</em></h2>
+    <div class="subcard">
+      <h4>Anormalidad transitoria</h4>
+      <p class="kicker">Categoría intermedia — no es un resultado benigno</p>
+      <p>De 999 lactantes de cuidados intensivos neonatales, el 21 % fue clasificado como transitorio a los 6 meses, y el 79 % de ellos se normalizó hacia los 15 meses (Ellison et al. 1982). El manual advierte que quienes presentan anormalidad transitoria entre los 6 y los 15 meses tienen después más problemas escolares en cognición, conducta, motricidad o lenguaje, y que no deben darse de alta del seguimiento.</p>
+    </div>
+    <div class="note">Los puntos de corte se fijaron de modo que el examinador pueda tener confianza en que las anormalidades del rango transitorio tienen una probabilidad alta de mejorar. Esa confianza es sobre el tono, no sobre el desenlace escolar.</div>
+  </div>
+
+  <div class="card">
+    <h2>Referencias</h2>
+    <table class="tbl">
+      <tbody>
+        <tr><td>1</td><td>Ellison PH. <i>Manual INFANIB</i>. Bloomington: PsychCorp / NCS Pearson, 1994. Apéndice B, Tablas 1.5, 3.1, 3.3 y 3.4.</td></tr>
+        <tr><td>2</td><td>Ellison PH, Horn JL, Browning CA. Construction of an Infant Neurological International Battery (INFANIB) for the assessment of neurological integrity in infancy. <i>Phys Ther</i> 1985;65(9):1326–31.</td></tr>
+        <tr><td>3</td><td>Soleimani F, Dadkhah A. Validity and reliability of INFANIB for detection of gross motor developmental delay in Iran. <i>Child Care Health Dev</i> 2007;33(3):262–5.</td></tr>
+        <tr><td>4</td><td>Liao W, Wen E, Li C, et al. Predicting neurodevelopmental outcomes for at-risk infants: reliability and predictive validity using a Chinese version of the INFANIB at 3, 7 and 10 months. <i>BMC Pediatr</i> 2012;12:72.</td></tr>
+        <tr><td>5</td><td>Charpak N, de la Hoz AM, Villegas J, Gil F. Discriminant ability of the INFANIB as a screening tool for the neurological follow-up of high-risk infants in Colombia. <i>Acta Paediatr</i> 2016;105:e195–9.</td></tr>
+        <tr><td>6</td><td>Novak I, Morgan C, Adde L, et al. Early, accurate diagnosis and early intervention in cerebral palsy. <i>JAMA Pediatr</i> 2017;171(9):897–907.</td></tr>
+        <tr><td>7</td><td>Morgan C, Romeo DM, Chorna O, et al. The pooled diagnostic accuracy of neuroimaging, general movements and neurological examination for diagnosing cerebral palsy early in high-risk infants. <i>J Clin Med</i> 2019;8(11):1879.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ PROCEDENCIA ══ -->
+<div class="panel" data-p="src">
+  <div class="card">
+    <h2>Asignación ítem <em>→ factor</em></h2>
+    <p class="sub">El manual nombra los cinco factores pero no publica una lista de qué ítem pertenece a cuál. No hace falta: el formulario impreso lo codifica. En el margen derecho hay cinco columnas estrechas y, en cada fila, cuatro están sombreadas y una queda en blanco. La casilla en blanco es donde se anota el puntaje, y su posición identifica el factor.</p>
+    <table class="tbl">
+      <thead><tr><th>Factor</th><th>Ítems</th><th>Máximo</th></tr></thead>
+      <tbody>
+        <tr><td>I · Espasticidad</td><td class="n">1, 8, 9, 14</td><td class="n">20</td></tr>
+        <tr><td>II · Cabeza y tronco</td><td class="n">10, 11, 13, 15</td><td class="n">20</td></tr>
+        <tr><td>III · Vestibular</td><td class="n">12, 16, 17, 20</td><td class="n">20</td></tr>
+        <tr><td>IV · Piernas</td><td class="n">6, 7, 18, 19</td><td class="n">20</td></tr>
+        <tr><td>V · Ángulos franceses</td><td class="n">2, 3, 4, 5</td><td class="n">20</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>Tres verificaciones concordantes</b>El caso trabajado del propio manual (Apéndice B, «Kate», 7 meses de edad corregida) reproduce exactamente sus cinco subtotales 20 / 10 / 2 / 16 / 10 y su total de 58. En la Tabla 3.4, los cinco factores de los normales a 12 meses suman 95.7, el mismo total impreso. Y la aritmética cierra en 5 factores × 4 ítems × 5 puntos = 100.</div>
+  </div>
+
+  <div class="card">
+    <h2>Dos versiones, una sola <em>discrepancia de regla</em></h2>
+    <div class="subcard">
+      <h4>Ítem 6 · Dorsiflexión del pie</h4>
+      <p class="kicker">Única divergencia entre 1985 y 1994</p>
+      <p>El manual de 1994 añade una regla propia para 0 – 2.9 meses en la que 40–80° puntúa 5 y 80–90° puntúa 3. Esa regla no existe en el formulario de 1985, cuya regla única aplica a todas las edades. Afecta solo a lactantes menores de 3 meses evaluados con 70–80° u 80–90°.</p>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Respuesta a &lt; 3 meses</th><th>Manual 1994</th><th>Formulario 1985</th></tr></thead>
+      <tbody>
+        <tr><td>70 – 80°</td><td class="n">5</td><td class="n">3</td></tr>
+        <tr><td>80 – 90°</td><td class="n">3</td><td class="n">1</td></tr>
+      </tbody>
+    </table>
+    <div class="note">No hay forma de resolver la discrepancia desde las fuentes: ambas están publicadas por la misma autora. El selector de versión permite elegir cuál se aplica, y la herramienta señala el conflicto cuando cambia el resultado. Diferencia adicional, solo de redacción: el ítem 12 se etiqueta presente / pobre / ausente en 1985 y con criterio de asimetría en 1994; los puntajes 5-3-1 son los mismos.</div>
+  </div>
+
+  <div class="card">
+    <h2>Advertencias sobre las <em>copias impresas</em></h2>
+    <div class="subcard">
+      <h4>Ítem 4 · Ángulo poplíteo</h4>
+      <p class="kicker">Error de reproducción en copias en circulación</p>
+      <p>En fotocopias del formulario que se usan en la práctica, la primera etapa aparece impresa como «60° a 90°». Tanto el original de 1985 como el manual de 1994 dicen 80°–90°, y leer «60 a 90» produce un solapamiento imposible con la opción contigua «menos de 80°». Es el ítem que Ellison señala como indicador más precoz de espasticidad, de modo que el error no es inocuo.</p>
+    </div>
+    <div class="alert conflict"><b>Conflicto que se preserva sin resolver</b>El texto del capítulo 3 afirma que a los 6 meses «solo un ítem se puntúa» en el Factor III, pero la Tabla 3.3 le asigna una media de 7.2 en los normales a esa edad, imposible con un único ítem de máximo 5. Las dos afirmaciones del manual son incompatibles. Se muestran ambas y no se corrige ninguna.</div>
+    <div class="note"><b>Anotaciones manuscritas</b>El ejemplar de referencia tiene tres notas añadidas a mano en la columna de comentarios, en los ítems 10, 15 y 18. No forman parte del texto impreso de Ellison. Se muestran junto al ítem correspondiente, marcadas como anotación, y no alteran el puntaje calculado.</div>
+    <div class="note"><b>Regla general de puntuación</b>El encabezado del formulario la enuncia para los veinte ítems: normal = 5, levemente anormal = 3, marcadamente anormal = 1. Los ítems escalonados por edad la expresan como coincide con la edad = 5, una etapa de diferencia = 3, dos etapas = 1, en cualquiera de los dos sentidos.</div>
+  </div>
+</div>
+
+<div class="notice">
+  <h2>Navegador INFANIB</h2>
+  <div class="lbl">Aviso clínico</div>
+  <p>Esta herramienta se basa en un instrumento publicado y está concebida únicamente como ayuda a la decisión clínica. No sustituye el juicio clínico, la evaluación integral del paciente ni la consulta con especialistas cualificados en neurodesarrollo. El INFANIB es un instrumento de tamizaje: no diagnostica parálisis cerebral ni asigna topografía, y un resultado normal no descarta la enfermedad, en particular antes de los seis meses de edad corregida. Todas las decisiones clínicas deben basarse en la evaluación individual del paciente y en los protocolos vigentes de la institución.</p>
+</div>
+
+<footer>
+  <b>Dr. Jano Jaramillo</b> — Pediatra y Neonatólogo, Posgrado en Trastornos del Aprendizaje. Panamá. Herramienta de apoyo a la decisión de uso interno, no reemplaza la decisión clínica.<br>
+  Instrumento: INFANIB, © Patricia H. Ellison.
+</footer>
+</main>
+
+<div class="rail noprint"><div class="wrap" id="railHost"></div></div>
+
+<script>
+"use strict";
+
+var S = function(d){ d = Math.abs(d); return d === 0 ? 5 : (d === 1 ? 3 : 1); };
+
+/* Devuelve la etapa esperada según edad, dada una lista [limiteSuperiorExcluyente, etapa] */
+function expBy(age, table){
+  for (var i = 0; i < table.length; i++){
+    if (age < table[i][0]) return table[i][1];
+  }
+  return table[table.length - 1][1];
+}
+
+var FACTORS = {
+  I:   { rom:"I",   name:"Espasticidad",      items:[1,8,9,14] },
+  II:  { rom:"II",  name:"Cabeza y tronco",   items:[10,11,13,15] },
+  III: { rom:"III", name:"Vestibular",        items:[12,16,17,20] },
+  IV:  { rom:"IV",  name:"Piernas",           items:[6,7,18,19] },
+  V:   { rom:"V",   name:"Ángulos franceses", items:[2,3,4,5] }
+};
+
+/* Medias ± DE de Stavrakas et al., reproducidas en las Tablas 3.3 y 3.4 del manual */
+var NORMS = {
+  6:  { label:"6 meses",  n:"n=5 normales, n=60 transitorios, n=17 anormales",
+        normal:{I:18.6,II:16.4,III:7.2,IV:15.6,V:17.6,T:75.4},
+        trans: {I:18.1,II:14.7,III:4.5,IV:13.1,V:14.4,T:64.8},
+        abn:   {I:12.8,II:8.7, III:3.9,IV:11.1,V:10.0,T:46.6} },
+  12: { label:"12 meses", n:"n=47 normales, n=15 transitorios, n=20 anormales",
+        normal:{I:19.9,II:19.4,III:19.3,IV:18.7,V:18.4,T:95.7},
+        trans: {I:18.9,II:14.3,III:15.1,IV:14.7,V:14.5,T:77.4},
+        abn:   {I:15.5,II:9.8, III:7.4, IV:10.5,V:9.8, T:52.9} }
+};
+
+/* --------- Definición de los 20 ítems --------- */
+var ITEMS = [
+{n:1, pos:"SUPINO", factor:"I", title:"Manos abiertas / cerradas", start:0,
+ rule:function(a){ return a<2 ? "0–1.9 m: lo esperado es cerradas" : (a<3 ? "2–2.9 m: lo esperado es a veces cerradas" : "≥3 m: lo esperado es abiertas"); },
+ opts:[
+  {t:"Empuñadas (clenched)", fixed:1},
+  {t:"Empuñadas solo con maniobra de estrés", fixed:1},
+  {t:"Cerradas", stage:0},
+  {t:"A veces cerradas", stage:1},
+  {t:"Abiertas", stage:2}],
+ exp:function(a){ return expBy(a,[[2,0],[3,1],[99,2]]); },
+ flags:[{k:"asym", t:"Una cerrada y una abierta", force:1}],
+ note:"En el INFANIB este ítem solo se califica como anormal por cierre excesivo o empuñamiento, como indicadores de tono extensor aumentado. El empuñamiento no es normal a ninguna edad."},
+
+{n:2, pos:"SUPINO", factor:"V", title:"Signo de la bufanda", start:0,
+ rule:function(a){ return "Progresión normal: mayor flexibilidad con la edad"; },
+ opts:[
+  {t:"Menos que la figura 1 (menos flexible)", stage:0},
+  {t:"0–15°  (figura 1)", stage:1},
+  {t:"15–45°  (figura 2)", stage:2},
+  {t:"45–60°  (figura 3)", stage:3},
+  {t:"60–85°  (figura 4)", stage:4},
+  {t:"Más allá de la figura 4 (más flexible)", stage:5}],
+ exp:function(a){ return expBy(a,[[3,1],[6,2],[9,3],[99,4]]); },
+ flags:[{k:"asym", t:"Asimetría definida (se registra, no cambia el puntaje)", force:0}]},
+
+{n:3, pos:"SUPINO", factor:"V", title:"Talón a oreja", start:0,
+ opts:[
+  {t:"Más de 100°", stage:0},
+  {t:"100–90°", stage:1},
+  {t:"90–60°", stage:2},
+  {t:"60–40°", stage:3},
+  {t:"40–10°", stage:4},
+  {t:"Menos de 10°", stage:5}],
+ exp:function(a){ return expBy(a,[[3,1],[6,2],[9,3],[99,4]]); },
+ flags:[{k:"asym", t:"Asimetría definida (se registra, no cambia el puntaje)", force:0}]},
+
+{n:4, pos:"SUPINO", factor:"V", title:"Ángulo poplíteo", start:0,
+ opts:[
+  {t:"Menos de 80°", stage:0},
+  {t:"80–90°", stage:1},
+  {t:"90–110°", stage:2},
+  {t:"110–150°", stage:3},
+  {t:"150–170°", stage:4},
+  {t:"Más de 170°", stage:5}],
+ exp:function(a){ return expBy(a,[[3,1],[6,2],[9,3],[99,4]]); },
+ flags:[{k:"asym", t:"Asimetría definida → puntaje 1", force:1}],
+ note:"Junto con el talón-oreja, es el indicador más precoz de espasticidad en el manual. Atención: en varias fotocopias del formulario en circulación la primera etapa aparece impresa como «60° a 90°». Es un error de reproducción: el formulario original de 1985 y el manual de 1994 dicen 80°–90°, y «60 a 90» se solaparía con la opción «menos de 80°». Use 80°–90°."},
+
+{n:5, pos:"SUPINO", factor:"V", title:"Abducción de piernas", start:0,
+ opts:[
+  {t:"Menos de 40°", stage:0},
+  {t:"40–70°", stage:1},
+  {t:"70–100°", stage:2},
+  {t:"100–130°", stage:3},
+  {t:"130–150°", stage:4},
+  {t:"Más de 150°", stage:5}],
+ exp:function(a){ return expBy(a,[[3,1],[6,2],[9,3],[99,4]]); },
+ flags:[{k:"asym", t:"Asimetría definida (se registra, no cambia el puntaje)", force:0}]},
+
+{n:6, pos:"SUPINO", factor:"IV", title:"Dorsiflexión del pie", start:0,
+ rule:function(a){
+   if (state.version === "1985") return "Regla única para todas las edades (formulario 1985): 40–70° = 5 · 10–40° y 70–80° = 3 · 0–10° y 80–90° = 1";
+   return a<3 ? "Regla 0–2.9 m (manual 1994): 40–80° = 5 · 10–40° y 80–90° = 3 · 0–10° = 1"
+              : "Regla ≥3 m: 40–70° = 5 · 10–40° y 70–80° = 3 · 0–10° y 80–90° = 1"; },
+ opts:[{t:"0–10°"},{t:"10–40°"},{t:"40–70°"},{t:"70–80°"},{t:"80–90°"}],
+ custom:function(a,i){
+   if (state.version === "1985") return [1,3,5,3,1][i];
+   return (a<3 ? [1,3,5,5,3] : [1,3,5,3,1])[i]; },
+ flags:[{k:"asym", t:"Asimetría definida → puntaje 1", force:1}],
+ note:"Único ítem en el que las dos versiones publicadas discrepan. El manual de 1994 añade una regla propia para 0–2.9 meses que no existe en el formulario de 1985."},
+
+{n:7, pos:"SUPINO", factor:"IV", title:"Prensión plantar", start:0,
+ rule:function(a){ return a<9 ? "Regla 0–8.9 m: prensión excesiva o con maniobra de estrés = 1 · cualquier otra = 5"
+                              : "Cambio mayor a los 9 m: ausente = 5 · apenas presente = 3 · presente = 1"; },
+ opts:[{t:"Ausente"},{t:"Apenas presente"},{t:"Presente / promedio"},{t:"Excesiva o con maniobra de estrés"}],
+ custom:function(a,i){ return a<9 ? (i===3?1:5) : [5,3,1,1][i]; },
+ flags:[{k:"asym", t:"Asimetría definida → puntaje 1", force:1}]},
+
+{n:8, pos:"SUPINO", factor:"I", title:"Reflejo tónico laberíntico supino", start:0,
+ rule:function(a){ return a<6 ? "Regla 0–5.9 m: retracción de hombros con extensión completa de piernas (o brazos y piernas flexionados) = 1 · otra = 5"
+                              : "Cambio mayor a los 6 m: ausente = 5 · algo = 3 · completo = 1"; },
+ opts:[{t:"Ausente"},{t:"Alguna retracción de hombros, o alguna extensión de tronco o piernas"},{t:"Retracción de hombros con extensión completa de piernas, o brazos y piernas flexionados"}],
+ custom:function(a,i){ return a<6 ? (i===2?1:5) : [5,3,1][i]; }},
+
+{n:9, pos:"SUPINO", factor:"I", title:"Reflejo tónico asimétrico del cuello", start:0,
+ rule:function(a){ return a<6 ? "Regla 0–5.9 m: persistente o espontáneo = 1 · otra = 5"
+                              : "Cambio mayor a los 6 m: ausente = 5 · adopta la postura y puede salir de ella = 3 · persistente = 1"; },
+ opts:[{t:"Ausente"},{t:"Adopta la postura, puede salir de ella"},{t:"Persistente o espontáneo"}],
+ custom:function(a,i){ return a<6 ? (i===2?1:5) : [5,3,1][i]; }},
+
+{n:10, pos:"SUPINO", factor:"II", title:"Tracción a sentado", start:0,
+ rule:function(a){ return a>=6 ? "≥6 m: completo = 5 · retraso parcial de la cabeza o no usa los brazos = 3 · retraso completo y no usa los brazos = 1"
+                               : "Etapa esperada por edad"; },
+ opts:[
+  {t:"Cabeza extendida, brazos extendidos", stage:0},
+  {t:"Cabeza arriba, brazos extendidos", stage:1},
+  {t:"Cabeza flexionada, brazos extendidos", stage:2},
+  {t:"Cabeza flexionada y brazos flexionados (completo)", stage:3}],
+ exp:function(a){ return expBy(a,[[3,0],[4,1],[5,2],[99,3]]); },
+ annot:"Anotación manuscrita del ejemplar: «0–4 meses, flexión cefálica y flexión de brazos = 1». No figura en el texto impreso; no se aplica al cálculo."},
+
+{n:11, pos:"SUPINO", factor:"II", title:"Derrotativo corporal", start:4,
+ opts:[{t:"Presente hacia ambos lados"},{t:"Lento o levemente asimétrico"},{t:"Ausente o marcadamente asimétrico"}],
+ custom:function(a,i){ return [5,3,1][i]; }},
+
+{n:12, pos:"SUPINO", factor:"III", title:"Rotativo corporal", start:9,
+ opts:[{t:"Presente"},{t:"Lento o levemente asimétrico  ·  «pobre» en el formulario de 1985"},{t:"Ausente o marcadamente asimétrico  ·  «ausente» en el formulario de 1985"}],
+ custom:function(a,i){ return [5,3,1][i]; },
+ note:"Las dos versiones etiquetan de forma distinta las mismas tres opciones: 1985 usa presente / pobre / ausente; 1994 introduce el criterio de asimetría. Los puntajes 5-3-1 no cambian."},
+
+{n:13, pos:"PRONO", factor:"II", title:"Prono / cuatro puntos", start:0,
+ opts:[
+  {t:"Levanta la cabeza", stage:0},
+  {t:"Cabeza a 45°", stage:1},
+  {t:"Solo antebrazos", stage:2},
+  {t:"Cabeza a 90°", stage:3},
+  {t:"Carga peso sobre brazos extendidos", stage:4},
+  {t:"Asume cuatro puntos, inestable", stage:5},
+  {t:"Asume cuatro puntos, bien", stage:6},
+  {t:"Se incorpora pasando por plantígrado", stage:7}],
+ exp:function(a){ return expBy(a,[[2,0],[3,1],[4,2],[5,3],[7,4],[8,5],[9,6],[99,7]]); }},
+
+{n:14, pos:"PRONO", factor:"I", title:"Reflejo tónico laberíntico prono", start:0,
+ rule:function(a){ return a<9 ? "Regla 0–8.9 m: protracción de hombros con brazos, caderas o piernas bajo el tronco = 1 · otra = 5"
+                              : "Cambio mayor a los 9 m: ausente = 5 · algo = 3 · completo = 1"; },
+ opts:[{t:"Ausente"},{t:"Con flexión cefálica: alguna protracción de hombros o alguna flexión de piernas"},{t:"Con flexión cefálica: protracción de hombros con brazos, caderas o piernas bajo el tronco"}],
+ custom:function(a,i){ return a<9 ? (i===2?1:5) : [5,3,1][i]; }},
+
+{n:15, pos:"SEDESTACIÓN", factor:"II", title:"Postura sentada", start:0,
+ opts:[
+  {t:"Espalda redondeada en toda su extensión", stage:0},
+  {t:"Quiebre a nivel de L3", stage:1},
+  {t:"Quiebre a nivel de L5", stage:2},
+  {t:"Espalda recta, sedestación erguida", stage:3}],
+ exp:function(a){ return expBy(a,[[3,0],[5,1],[7,2],[99,3]]); },
+ annot:"Anotación manuscrita del ejemplar: «0–5 meses, quiebre en L5 con extensión cefálica = 1». No figura en el texto impreso; no se aplica al cálculo."},
+
+{n:16, pos:"SEDESTACIÓN", factor:"III", title:"Paracaídas lateral", start:6,
+ opts:[{t:"Presente en ambos brazos"},{t:"Lento o levemente asimétrico"},{t:"Ausente o marcadamente asimétrico"}],
+ custom:function(a,i){ return [5,3,1][i]; }},
+
+{n:17, pos:"SEDESTACIÓN", factor:"III", title:"Paracaídas posterior", start:9,
+ opts:[{t:"Presente en ambos brazos"},{t:"Lento o levemente asimétrico"},{t:"Ausente o marcadamente asimétrico"}],
+ custom:function(a,i){ return [5,3,1][i]; }},
+
+{n:18, pos:"BIPEDESTACIÓN", factor:"IV", title:"Carga de peso", start:0,
+ opts:[
+  {t:"Reflejo primitivo de marcha", stage:0},
+  {t:"Sin carga de peso", stage:1},
+  {t:"Carga pobre, se quiebra en las rodillas", stage:2},
+  {t:"Carga de peso desigual", stage:3},
+  {t:"Carga de peso adecuada", stage:4},
+  {t:"De pie, sostenido", stage:5}],
+ exp:function(a){ return expBy(a,[[1,0],[2,1],[5,2],[7,3],[9,4],[99,5]]); },
+ annot:"Anotación manuscrita del ejemplar: «carga de peso persistente (>60 s) entre 2.5 y 5 meses = 1». No figura en el texto impreso; no se aplica al cálculo."},
+
+{n:19, pos:"BIPEDESTACIÓN", factor:"IV", title:"Reacción de soporte positivo", start:3,
+ opts:[{t:"Mantiene el peso con los pies planos"},{t:"5–30 s en puntas, luego baja a pies planos"},{t:"Más de 30 s en puntas"}],
+ custom:function(a,i){ return [5,3,1][i]; },
+ note:"Doble control de la marcha en puntas y del tono aumentado en el tobillo."},
+
+{n:20, pos:"SUSPENSIÓN", factor:"III", title:"Paracaídas anterior", start:7,
+ opts:[{t:"Presente"},{t:"Lento o levemente asimétrico"},{t:"Ausente o marcadamente asimétrico"}],
+ custom:function(a,i){ return [5,3,1][i]; }}
+];
+
+/* ============================================================
+   FIGURAS
+   Los ítems 2, 3, 4, 5 y 6 se dibujan de forma paramétrica a
+   partir del ángulo medio de cada rango, de modo que la figura
+   es geométricamente exacta y no una aproximación del original.
+   Los ítems 1, 10, 13, 15 y 18 se dibujan como esquemas de
+   postura equivalentes a las viñetas del formulario impreso.
+   ============================================================ */
+var RAD = Math.PI / 180;
+function sv(inner){
+  return '<svg class="ico" viewBox="0 0 52 40" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+         'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+}
+function ln(x1,y1,x2,y2){
+  return '<path d="M' + x1.toFixed(1) + ',' + y1.toFixed(1) + ' L' + x2.toFixed(1) + ',' + y2.toFixed(1) + '"/>';
+}
+function ci(x,y,r,fill){
+  return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r + '"' + (fill ? ' fill="currentColor"' : '') + '/>';
+}
+
+var ICONS = {
+
+/* 1 · manos — el puño apretado se dibuja más pequeño que la mano simplemente cerrada */
+1:function(i){
+  if (i === 4) return sv(ci(26,24,7) + ln(20,18,18,10) + ln(24,17,23,8) + ln(28,17,30,8) + ln(32,18,34,10));
+  if (i === 0) return sv(ci(26,21,6.5) + ln(20.5,19,31.5,19) + ln(20.5,23.5,31.5,23.5));
+  if (i === 1) return sv(ci(26,21,6.5) + ln(20.5,19,31.5,19) + ln(20.5,23.5,31.5,23.5) + '<path d="M41,13 l-4,7 h4 l-4,7"/>');
+  if (i === 2) return sv(ci(26,21,8.5) + ln(18,21,34,21));
+  return sv(ci(26,23,8.5) + ln(18,24,34,24) + ln(24,15,24,7));
+},
+
+/* 2 · signo de la bufanda — codo respecto de la línea media */
+2:function(i){
+  var t = [-12,8,30,52,72,100][i] * RAD;
+  var ex = 26 - 11 * Math.sin(t), ey = 24 - 11 * Math.cos(t);
+  return sv(ci(26,5.5,4) + ci(26,24,11) +
+    '<path d="M26,13 L26,35" stroke-dasharray="2 2" opacity=".5"/>' +
+    ln(36,18,ex,ey) + ci(ex,ey,2.2));
+},
+
+/* 3 · talón a oreja — ángulo entre la pierna y el eje del tronco */
+3:function(i){
+  var t = [110,95,75,50,25,6][i] * RAD;
+  var hx = 38, hy = 32, L = 24;
+  var ex = hx - L * Math.cos(t), ey = hy - L * Math.sin(t);
+  return sv(ln(10,32,38,32) + ci(7,30,4) + ln(hx,hy,ex,ey) + ci(ex,ey,2.2) + ci(hx,hy,1.6,true));
+},
+
+/* 4 · ángulo poplíteo — vértice en la rodilla */
+4:function(i){
+  var rot = (180 - [70,85,100,130,160,178][i]) * RAD;
+  var kx = 14, ky = 18, L = 15;
+  var ex = kx + L * Math.sin(rot), ey = ky - L * Math.cos(rot);
+  return sv(ci(6,34,3.5) + ln(9,34,14,34) + ln(14,34,kx,ky) + ln(kx,ky,ex,ey) + ci(kx,ky,1.7,true));
+},
+
+/* 5 · abducción — ángulo total entre ambas piernas */
+5:function(i){
+  var h = [30,55,85,115,140,165][i] / 2 * RAD;
+  var px = 26, py = 10, L = 22;
+  var lx = px - L * Math.sin(h), ly = py + L * Math.cos(h);
+  var rx = px + L * Math.sin(h);
+  return sv(ci(px,py,3) + ln(px,py,lx,ly) + ln(px,py,rx,ly) + ci(lx,ly,1.9,true) + ci(rx,ly,1.9,true));
+},
+
+/* 6 · dorsiflexión — pierna vertical, pie con planta marcada para que el
+       ángulo pequeño siga siendo legible cuando ambos segmentos casi coinciden */
+6:function(i){
+  var t = [5,25,55,75,85][i] * RAD;
+  var ax = 34, ay = 30, L = 15;
+  var ux = -Math.sin(t), uy = -Math.cos(t);
+  var fx = ax + L * ux, fy = ay + L * uy;
+  var px = -Math.cos(t), py = Math.sin(t);
+  return sv(ln(34,5,ax,ay) +
+    ln(ax,ay,fx,fy) +
+    ln(fx - 3.5*px, fy - 3.5*py, fx + 3.5*px, fy + 3.5*py) +
+    ci(ax,ay,1.7,true));
+},
+
+/* 10 · tracción a sentado — el ángulo de la cabeza respecto del tronco
+        expresa el grado de retraso cefálico */
+10:function(i){
+  var phi = [65,45,22,5][i] * RAD;
+  var sx = 24, sy = 22, D = 10.5;
+  var hx = sx + D * Math.cos(phi), hy = sy + D * Math.sin(phi);
+  var arm = (i === 3) ? '<path d="M24,22 L34,19 L45,9"/>' : '<path d="M24,22 L45,9"/>';
+  return sv(ln(8,34,sx,sy) + ci(8,34,1.7,true) + arm +
+            ln(sx,sy,hx - 4*Math.cos(phi),hy - 4*Math.sin(phi)) + ci(hx,hy,4.2));
+},
+
+/* 13 · prono / cuatro puntos */
+13:function(i){
+  var g = '<path d="M4,36 L48,36" opacity=".3" stroke-dasharray="2 2"/>';
+  var f = [
+    ln(10,32,34,32) + ln(34,32,36,31) + ci(40,30,4),
+    ln(10,33,32,30) + ln(32,30,34,28) + ci(38,25,4),
+    ln(10,33,30,26) + ln(30,26,32,24) + ci(36,21,4) + '<path d="M30,26 L28,36 L36,36"/>',
+    ln(10,33,30,24) + ln(30,24,32,22) + ci(36,18,4) + '<path d="M30,24 L28,36 L36,36"/>',
+    ln(10,33,30,22) + ln(30,22,32,20) + ci(36,16,4) + ln(30,22,31,36),
+    ln(14,21,34,21) + ln(34,21,36,20) + ci(40,18,4) +
+      '<path d="M34,21 L35,36" stroke-dasharray="3 2"/><path d="M14,21 L13,36" stroke-dasharray="3 2"/>',
+    ln(14,21,34,21) + ln(34,21,36,20) + ci(40,18,4) + ln(34,21,35,36) + ln(14,21,13,36),
+    '<path d="M11,36 L21,19 L34,16 L40,36"/>' + ci(15,26,3.4)
+  ];
+  return sv(g + f[i]);
+},
+
+/* 15 · sedestación — nivel del quiebre de la columna */
+15:function(i){
+  var sp = ['M16,34 C11,25 18,15 27,18','M16,34 L16,28 C16,20 21,14 28,17',
+            'M16,34 L16,24 C16,17 20,12 26,15','M16,34 L16,13'];
+  var hd = [[30,16],[31,15],[29,13],[16,8]];
+  return sv(ln(16,34,36,34) + '<path d="' + sp[i] + '"/>' + ci(hd[i][0],hd[i][1],4.2));
+},
+
+/* 18 · carga de peso */
+18:function(i){
+  var g = '<path d="M4,38 L48,38" opacity=".3" stroke-dasharray="2 2"/>';
+  var top = ci(26,7,4.2) + ln(26,11,26,22);
+  var legs = [
+    '<path d="M26,22 L20,28 L18,34"/><path d="M26,22 L30,29 L30,38"/>',
+    '<path d="M26,22 L19,25 L21,31"/><path d="M26,22 L33,25 L31,31"/>',
+    '<path d="M26,22 L19,28 L22,38"/><path d="M26,22 L33,28 L30,38"/>',
+    '<path d="M26,22 L20,28 L22,38"/><path d="M26,22 L30,38"/>',
+    '<path d="M26,22 L22,30 L22,38"/><path d="M26,22 L30,30 L30,38"/>',
+    '<path d="M26,22 L22,38"/><path d="M26,22 L30,38"/>'
+  ];
+  var arms = (i >= 4) ? '<path d="M26,14 L34,18"/>' : '<path d="M26,14 L33,12"/>';
+  return sv(g + top + arms + legs[i]);
+}
+};
+
+/* --------- Estado --------- */
+var state = { sel:{}, flags:{}, age:null, version:"1994", tab:"eval",
+               gma:{ checks:{}, traj:[] },
+               hine:{ sc:{}, side:{}, asym:{}, miles:{}, mileAge:{}, behs:{} } };
+
+/* --------- Edad corregida --------- */
+function computeAge(){
+  var man = parseFloat(document.getElementById("pmanual").value);
+  if (!isNaN(man) && man >= 0){ state.age = man; return {age:man, src:"manual"}; }
+  var dob = document.getElementById("pdob").value;
+  var ex  = document.getElementById("pexam").value;
+  var w   = parseInt(document.getElementById("pegw").value, 10);
+  var d   = parseInt(document.getElementById("pegd").value, 10);
+  if (!dob || !ex || isNaN(w)){ state.age = null; return {age:null}; }
+  if (isNaN(d)) d = 0;
+  var days = (new Date(ex) - new Date(dob)) / 86400000;
+  if (!isFinite(days) || days < 0){ state.age = null; return {age:null, err:"La fecha del examen es anterior al nacimiento."}; }
+  var corr = (40*7) - (w*7 + d);
+  if (corr < 0) corr = 0;
+  var a = (days - corr) / 30.4375;
+  if (a < 0) a = 0;
+  state.age = a;
+  return {age:a, src:"calc", chrono:days/30.4375, corrDays:corr};
+}
+
+function ageBand(a){
+  if (a < 4)  return {k:"b1", label:"menor de 4 meses",  abn:48, tr:65};
+  if (a < 8)  return {k:"b2", label:"4 a 8 meses",       abn:54, tr:71};
+  return       {k:"b3", label:"8 meses o más",           abn:68, tr:82};
+}
+function classify(total, band){
+  if (total <= band.abn) return "abnormal";
+  if (total <= band.tr)  return "transient";
+  return "normal";
+}
+var CLSNAME = {normal:"Normal", transient:"Transitoriamente anormal", abnormal:"Anormal"};
+
+/* --------- Puntaje de un ítem --------- */
+function itemScore(it, a){
+  if (a === null) return null;
+  if (a < (it.start || 0)) return 0;              // ítem aún no aplicable → 0
+  var sel = state.sel[it.n];
+  if (sel === undefined || sel === null) return null;
+  var f = state.flags[it.n] || {};
+  var forced = false;
+  (it.flags || []).forEach(function(fl){ if (f[fl.k] && fl.force === 1) forced = true; });
+  if (forced) return 1;
+  var o = it.opts[sel];
+  if (o.fixed !== undefined) return o.fixed;
+  if (it.custom) return it.custom(a, sel);
+  return S(o.stage - it.exp(a));
+}
+function optScore(it, i, a){
+  if (a === null) return null;
+  var o = it.opts[i];
+  if (o.fixed !== undefined) return o.fixed;
+  if (it.custom) return it.custom(a, i);
+  return S(o.stage - it.exp(a));
+}
+
+/* --------- Cálculo global --------- */
+function compute(){
+  var a = state.age;
+  var res = { total:0, max:0, byFactor:{}, maxFactor:{}, pending:[], applicable:0, scoredAll:true };
+  ["I","II","III","IV","V"].forEach(function(k){ res.byFactor[k] = 0; res.maxFactor[k] = 0; });
+  ITEMS.forEach(function(it){
+    var blocked = (a !== null && a < (it.start || 0));
+    if (!blocked){
+      res.maxFactor[it.factor] += 5;
+      res.max += 5;
+      res.applicable++;
+    }
+    var sc = itemScore(it, a);
+    if (sc === null){ res.pending.push(it.n); res.scoredAll = false; return; }
+    res.byFactor[it.factor] += sc;
+    res.total += sc;
+  });
+  return res;
+}
+
+function frenchDirection(a){
+  /* >0 = más flexible de lo esperado (sugiere hipotonía); <0 = menos flexible (sugiere hipertonía) */
+  var d = 0, seen = 0;
+  [2,3,4,5].forEach(function(n){
+    var it = ITEMS.filter(function(x){ return x.n === n; })[0];
+    var sel = state.sel[n];
+    if (sel === undefined) return;
+    d += (it.opts[sel].stage - it.exp(a)); seen++;
+  });
+  return {d:d, seen:seen};
+}
+function asymmetryEvidence(){
+  var ev = [];
+  [2,3,4,5,6,7].forEach(function(n){
+    if ((state.flags[n] || {}).asym){
+      var it = ITEMS.filter(function(x){ return x.n === n; })[0];
+      ev.push("Ítem " + n + " (" + it.title.toLowerCase() + "): asimetría definida marcada");
+    }
+  });
+  if ((state.flags[1] || {}).asym) ev.push("Ítem 1: una mano cerrada y la otra abierta");
+  [11,12,16,17,20].forEach(function(n){
+    var sel = state.sel[n];
+    if (sel === 1 || sel === 2){
+      var it = ITEMS.filter(function(x){ return x.n === n; })[0];
+      ev.push("Ítem " + n + " (" + it.title.toLowerCase() + "): " + it.opts[sel].t.toLowerCase());
+    }
+  });
+  if (state.sel[18] === 3) ev.push("Ítem 18: carga de peso desigual");
+  return ev;
+}
+
+function nextVisits(a){
+  var sched = [3, 6, 9, 12, 18];
+  return sched.filter(function(x){ return x > a + 0.4; }).slice(0, 3);
+}
+
+/* ══════════════════════════════════════════════════════
+   MÓDULO GMA · movimientos generales, método de Prechtl
+   Fuente: Einspieler et al., Early Hum Dev 1997;50:47–60
+   ══════════════════════════════════════════════════════ */
+
+var FW_START = 46, FW_CORE_A = 49, FW_CORE_B = 55, FW_END = 60;
+
+var NOT = {
+  "N":  {name:"Normal",                 kind:"normal",  cls:"N"},
+  "PR": {name:"Repertorio pobre",       kind:"abn",     cls:"PR"},
+  "CS": {name:"Rígidos-sincronizados",  kind:"abn",     cls:"CS"},
+  "Ch": {name:"Caóticos",               kind:"abn",     cls:"Ch"},
+  "AF": {name:"Fidgety anormales",      kind:"abn",     cls:"AF"},
+  "F-": {name:"Fidgety ausentes",       kind:"abn",     cls:"F"}
+};
+
+var GMA_CHECK = [
+ {g:"Grabación", items:[
+  {k:"estado", crit:1, t:"Estado 4 de Prechtl (vigilia activa) si es mayor de 36 sem EPM; brote de actividad si es menor"},
+  {k:"chupon", crit:1, t:"Sin chupón — la succión induce postura de flexión de brazos, puños cerrados y extensión de piernas"},
+  {k:"llanto", crit:1, t:"Sin llanto ni irritabilidad prolongada, somnolencia ni episodios de hipo"},
+  {k:"interf", crit:1, t:"Sin interferencia de observador, padres o juguetes en el entorno inmediato"},
+  {k:"espejo", crit:1, t:"Sin espejo en el campo — la imagen actúa como un «gemelo» y destruye la percepción Gestalt"},
+  {k:"camara", crit:1, t:"Cámara alta, vista medio-sagital o lateral, con la cara visible para descartar que lo brusco se deba al llanto"},
+  {k:"dur",    crit:1, t:"Duración suficiente: cerca de 60 min en prematuro y término; 10 min óptimos bastan en el lactante mayor"},
+  {k:"pos",    crit:0, t:"Supino en incubadora, cuna o colchoneta en el suelo — no en mesa ni cambiador"},
+  {k:"ropa",   crit:0, t:"Ropa ligera, brazos y piernas descubiertos, sin pañal grueso"},
+  {k:"temp",   crit:0, t:"Temperatura ambiente confortable para la edad y la ropa"},
+  {k:"habit",  crit:0, t:"Lactante habituado a la cámara, o cámara miniatura, en mayores de 1 mes"},
+  {k:"dias",   crit:0, t:"Fuera de los primeros 3 días de vida"},
+  {k:"tc",     crit:0, t:"Código de tiempo superpuesto en la grabación"}
+ ]},
+ {g:"Selección y análisis", items:[
+  {k:"tres",   crit:1, t:"Al menos 3 GM seleccionados — inicio, medio y final de la grabación — incluyendo el comienzo y el final de cada movimiento"},
+  {k:"global", crit:1, t:"Juicio global normal frente a anormal realizado antes de cualquier análisis detallado"},
+  {k:"sesion", crit:0, t:"Sesión de análisis de 45 minutos como máximo, sin pausa"},
+  {k:"recal",  crit:0, t:"Recalibración de la percepción Gestalt viendo GM normales entre sesiones"},
+  {k:"oro",    crit:0, t:"Cinta patrón oro del grupo de edad disponible durante el análisis"}
+ ]}
+];
+
+function gmaCritTotal(){
+  var n = 0;
+  GMA_CHECK.forEach(function(g){ g.items.forEach(function(i){ if (i.crit) n++; }); });
+  return n;
+}
+function gmaCritDone(){
+  var n = 0;
+  GMA_CHECK.forEach(function(g){ g.items.forEach(function(i){ if (i.crit && state.gma.checks[i.k]) n++; }); });
+  return n;
+}
+function gmaCritMissing(){
+  var out = [];
+  GMA_CHECK.forEach(function(g){ g.items.forEach(function(i){ if (i.crit && !state.gma.checks[i.k]) out.push(i.t); }); });
+  return out;
+}
+
+function epochOf(w){
+  if (w < 38) return "≤ 37 sem · prematuro";
+  if (w <= 42) return "38–42 sem · término";
+  if (w <= 47) return "43–47 sem";
+  return "≥ 48 sem · edad fidgety";
+}
+
+function addGma(){
+  var w = parseInt(document.getElementById("gwk").value, 10);
+  var k = document.getElementById("gnot").value;
+  if (isNaN(w) || w < 30 || w > 60) return;
+  state.gma.traj = state.gma.traj.filter(function(x){ return x.w !== w; });
+  state.gma.traj.push({w:w, k:k});
+  state.gma.traj.sort(function(a,b){ return a.w - b.w; });
+  document.getElementById("gwk").value = "";
+  renderGma();
+}
+function delGma(w){
+  state.gma.traj = state.gma.traj.filter(function(x){ return x.w !== w; });
+  renderGma();
+}
+function toggleCheck(k){
+  state.gma.checks[k] = !state.gma.checks[k];
+  renderGma();
+}
+
+/* ── Lectura de la trayectoria ── */
+function gmaVerdict(){
+  var t = state.gma.traj;
+  if (!t.length) return {state:"empty"};
+  var inFw = t.filter(function(x){ return x.w >= FW_START; });
+  var early = t.filter(function(x){ return x.w < FW_START; });
+  var last = inFw.length ? inFw[inFw.length - 1] : null;
+  var abn = t.filter(function(x){ return NOT[x.k].kind === "abn"; });
+  var csRun = t.filter(function(x){ return x.k === "CS"; });
+  var epochs = {};
+  abn.forEach(function(x){ epochs[epochOf(x.w)] = 1; });
+  var epochCount = Object.keys(epochs).length;
+  var normalisedByFw = early.length && abn.length && inFw.length &&
+                       inFw.every(function(x){ return x.k === "N"; }) &&
+                       early.some(function(x){ return NOT[x.k].kind === "abn"; });
+  return {
+    state:"has", last:last, inFw:inFw, early:early, abn:abn,
+    csRun:csRun, epochCount:epochCount, normalisedByFw:normalisedByFw,
+    hasCore: t.some(function(x){ return x.w >= FW_CORE_A && x.w <= FW_CORE_B; })
+  };
+}
+
+/* ── Render ── */
+function renderGmaChecks(){
+  var h = "";
+  GMA_CHECK.forEach(function(g){
+    h += '<p class="chkgrp">' + g.g + '</p>';
+    g.items.forEach(function(i){
+      var on = !!state.gma.checks[i.k];
+      h += '<label class="chk' + (on ? ' on' : '') + '">' +
+           '<input type="checkbox"' + (on ? ' checked' : '') + ' onchange="toggleCheck(\'' + i.k + '\')">' +
+           '<span class="ct">' + i.t + '</span>' +
+           (i.crit ? '<span class="crit">Crítico</span>' : '') + '</label>';
+    });
+  });
+  document.getElementById("gmaCheckHost").innerHTML = h;
+
+  var done = gmaCritDone(), tot = gmaCritTotal(), miss = gmaCritMissing();
+  var v = "";
+  if (done === tot){
+    v = '<div class="alert info" style="border-color:#265C40;background:#12301F"><b style="color:var(--normal)">Grabación apta para el juicio</b>' +
+        'Los ' + tot + ' requisitos críticos están cubiertos. El juicio global de la trayectoria puede interpretarse con la fiabilidad reportada para el método.</div>';
+  } else {
+    v = '<div class="alert warn"><b>Grabación no apta — ' + done + ' de ' + tot + ' requisitos críticos</b>' +
+        'Falta: ' + miss.map(function(m){ return m.split(" — ")[0].toLowerCase(); }).join(" · ") +
+        '. Con requisitos críticos sin cubrir, el juicio que aparece abajo se muestra únicamente como registro y no debe usarse para decidir. ' +
+        'La mala calidad de la grabación reduce directamente la posibilidad de un juicio exacto.</div>';
+  }
+  document.getElementById("gmaValid").innerHTML = v;
+}
+
+function renderTraj(){
+  var h = '<div class="traj-scroll"><div class="traj-grid">';
+  for (var w = 30; w <= FW_END; w++){
+    var cls = "wcol";
+    if (w >= FW_START) cls += " fw";
+    if (w >= FW_CORE_A && w <= FW_CORE_B) cls += " fwc";
+    if (w === 40) cls += " term";
+    var e = state.gma.traj.filter(function(x){ return x.w === w; })[0];
+    h += '<div class="' + cls + '"><div class="wlab">' + (w % 2 === 0 ? w : "") + '</div>' +
+         '<div class="wcell' + (e ? " has n-" + NOT[e.k].cls : "") + '">' + (e ? e.k : "") + '</div></div>';
+  }
+  h += '</div></div>';
+  h += '<div class="trajlg">' +
+       '<span><i style="background:var(--text-3)"></i>Línea de término, 40 sem</span>' +
+       '<span><i style="background:rgba(233,185,73,.25)"></i>Ventana fidgety, 46–60 sem</span>' +
+       '<span><i style="background:rgba(233,185,73,.55)"></i>Expresión plena, 49–55 sem</span>' +
+       '<span><i style="background:var(--normal)"></i>Normal</span>' +
+       '<span><i style="background:var(--transient)"></i>PR · Ch · AF</span>' +
+       '<span><i style="background:var(--abnormal)"></i>CS · F−</span></div>';
+  document.getElementById("trajHost").innerHTML = h;
+
+  var l = "";
+  if (!state.gma.traj.length){
+    l = '<p style="color:var(--text-3);font-size:14px;margin:14px 0 0">Sin registros. Una sola evaluación no constituye una trayectoria: el valor predictivo del método descansa en la consistencia del hallazgo a lo largo del tiempo.</p>';
+  } else {
+    l = '<div style="margin-top:14px">';
+    state.gma.traj.forEach(function(e){
+      var n = NOT[e.k], bg = n.kind === "normal" ? "var(--normal)"
+            : (e.k === "CS" || e.k === "F-") ? "var(--abnormal)" : "var(--transient)";
+      var pt = e.w - 40;
+      l += '<div class="tent"><span class="tw">' + e.w + ' sem</span>' +
+           '<span class="tk" style="background:' + bg + '">' + e.k + '</span>' +
+           '<span class="tn">' + n.name + ' · ' + epochOf(e.w) +
+           (pt >= 0 ? ' · ' + pt + ' sem post-término' : ' · ' + (-pt) + ' sem pre-término') + '</span>' +
+           '<button class="tx" onclick="delGma(' + e.w + ')" aria-label="Eliminar">×</button></div>';
+    });
+    l += '</div>';
+  }
+  document.getElementById("trajList").innerHTML = l;
+}
+
+function renderGmaVerdict(){
+  var host = document.getElementById("gmaVerdict");
+  var v = gmaVerdict(), h = "";
+  var apt = (gmaCritDone() === gmaCritTotal());
+
+  if (v.state === "empty"){
+    host.innerHTML = '<div class="verdict pend"><p class="cls">Sin trayectoria registrada</p><div class="meta">' +
+      'Añada al menos un juicio global. La lectura gana solidez con cada época de edad cubierta, y muy especialmente con una evaluación dentro de la ventana de expresión plena de los fidgety.</div></div>';
+    return;
+  }
+
+  var cls, title, ev = [];
+  if (!v.inFw.length){
+    cls = "pend";
+    title = "Ventana fidgety aún no evaluada";
+    ev.push("La trayectoria solo cubre edades anteriores a las 46 semanas EPM, donde la especificidad del método es del 46 al 65 %.");
+    ev.push("El hallazgo de mayor valor pronóstico — la calidad de los fidgety — todavía no se ha registrado. Programe una grabación entre las 49 y las 55 semanas EPM.");
+    if (v.abn.length) ev.push("Hay " + v.abn.length + " juicio(s) anormal(es) en el periodo temprano. No los interprete como predicción: en esta franja muchos se normalizan espontáneamente hacia el tercer mes.");
+  } else if (v.last.k === "N"){
+    cls = "normal";
+    title = "Fidgety normales en la última evaluación";
+    ev.push("En la serie de referencia de 130 lactantes, el 96 % de los que tuvieron fidgety normales presentó desenlace neurológico normal a los 2 años.");
+    ev.push("La presencia de fidgety normales en el tercer mes es indicativa de desenlace normal y la especificidad del método en esa época alcanza el 82 al 100 %.");
+    if (v.normalisedByFw) ev.push("La trayectoria muestra anormalidad temprana que se normalizó al llegar a la edad fidgety. El artículo es explícito: no era un falso positivo, era una anormalidad real pero transitoria, que desaparece con la transformación neural del tercer mes.");
+  } else if (v.last.k === "F-"){
+    cls = "abnormal";
+    title = "Fidgety ausentes";
+    ev.push("Es el hallazgo de mayor valor pronóstico del método. La ausencia o anormalidad de los fidgety se siguió de anormalidad neurológica en el 95 % de los casos: parálisis cerebral en el 82 % y retraso del desarrollo con signos menores en el 13 %.");
+    ev.push("Rendimiento de los fidgety en esa serie: sensibilidad 95 % y especificidad 96 %, superior a la ecografía cerebral en la misma cohorte (S 80 % · E 83 %).");
+    if (v.csRun.length) ev.push("Además hay " + v.csRun.length + " registro(s) de movimientos rígidos-sincronizados en la trayectoria, la combinación descrita en los lactantes que desarrollaron parálisis cerebral.");
+  } else if (v.last.k === "AF"){
+    cls = "abnormal";
+    title = "Fidgety anormales";
+    ev.push("La anormalidad de los fidgety se agrupa con la ausencia en la serie de referencia: 95 % de anormalidad neurológica a los 2 años.");
+    ev.push("Cautela sobre la categoría en sí: el acuerdo interobservador para fidgety anormales fue del 78 %, el más bajo de todas las categorías, y descansa sobre cuatro casos únicamente. Considere una segunda lectura independiente.");
+  } else {
+    cls = "abnormal";
+    title = NOT[v.last.k].name + " en la ventana fidgety";
+    ev.push("Un patrón de la era writhing persistiendo dentro de la ventana fidgety no es un hallazgo esperado. Verifique que la grabación cumpla los requisitos críticos antes de darlo por válido.");
+    if (v.last.k === "CS") ev.push("Los movimientos rígidos-sincronizados son la categoría de mayor acuerdo interobservador (89 %) y la más ligada al desarrollo de parálisis cerebral cuando se encuentran cerca del término.");
+  }
+
+  if (v.epochCount >= 2){
+    ev.push("Consistencia: hay hallazgos anormales en " + v.epochCount + " épocas de edad distintas. Solo cuando el hallazgo anormal se encuentra consistentemente en el tiempo la predicción de déficit mayor se vuelve sólida.");
+  } else if (v.abn.length === 1){
+    ev.push("Consistencia: la anormalidad aparece en una sola evaluación. Un hallazgo aislado no establece una trayectoria; repita la grabación antes de concluir.");
+  }
+  if (!v.hasCore) ev.push("No hay ninguna evaluación entre las 49 y las 55 semanas EPM, el tramo de expresión plena de los fidgety. Es la grabación de mayor rendimiento del método.");
+
+  h = '<div class="verdict ' + cls + '"><p class="cls">' + title + '</p><div class="meta">' +
+      'Última evaluación: <b>' + v.last.w + ' semanas EPM</b> · ' + NOT[v.last.k].name +
+      '. Trayectoria de ' + state.gma.traj.length + ' registro(s) con ' + v.abn.length + ' juicio(s) anormal(es).</div></div>';
+
+  if (!apt){
+    h += '<div class="alert warn"><b>Lectura no interpretable</b>Faltan requisitos críticos de grabación o análisis. Lo anterior queda como registro documental, no como base de decisión.</div>';
+  }
+
+  h += '<div class="hyp"><h4>Elementos que sostienen la lectura</h4><ul>' +
+       ev.map(function(e){ return '<li>' + e + '</li>'; }).join("") + '</ul></div>';
+
+  h += '<div class="note"><b>Lo que esta lectura no hace</b>El método aporta un juicio global de calidad del movimiento, no un diagnóstico. La trayectoria individual es el instrumento, no la evaluación aislada: es la consistencia o inconsistencia de los hallazgos a lo largo de las épocas lo que sostiene la predicción.</div>';
+  host.innerHTML = h;
+}
+
+function renderGmaBridge(){
+  var a = state.age, h = "";
+  if (a !== null){
+    var wk = Math.round(40 + a * 4.345);
+    var inWin = (wk >= FW_START && wk <= FW_END);
+    h = '<div class="alert ' + (a < 4 ? "warn" : "info") + '" style="margin-top:16px"><b>Puente con el INFANIB</b>' +
+        'La edad corregida de ' + a.toFixed(1) + ' meses ingresada en la pestaña Evaluación equivale a unas <b>' + wk +
+        ' semanas EPM</b>' + (inWin ? ', dentro de la ventana fidgety.' : ', fuera de la ventana fidgety.') + ' ';
+    if (a < 4){
+      h += 'En esta franja el INFANIB rinde peor — S 62.2 % y E 76.1 % a los 3 meses en la cohorte de Charpak — mientras la GMA alcanza especificidad del 82 al 100 % en el tercer mes post-término. ' +
+           '<b>A esta edad la GMA tiene prioridad sobre el INFANIB.</b>';
+    } else if (a < 6){
+      h += 'Periodo de transición: los fidgety desaparecen hacia las 15 y como máximo las 20 semanas post-término, y el INFANIB aún no alcanza su mejor rendimiento. Use ambos y lea la trayectoria, no el corte.';
+    } else {
+      h += 'Los fidgety ya no están presentes a esta edad. El relevo corresponde al INFANIB, cuya especificidad mejora de forma marcada hacia los 9 y 10 meses de edad corregida.';
+    }
+    h += '</div>';
+  } else {
+    h = '<div class="alert info" style="margin-top:16px"><b>Puente con el INFANIB</b>' +
+        'Los dos instrumentos no compiten: la GMA cubre la ventana en que el INFANIB rinde peor — antes de los 4 meses de edad corregida — y el INFANIB toma el relevo desde los 6 meses, cuando los fidgety ya han desaparecido. ' +
+        'Ingrese la edad corregida en la pestaña Evaluación para ver la correspondencia con la ventana fidgety.</div>';
+  }
+  document.getElementById("gmaBridge").innerHTML = h;
+}
+
+function renderGma(){
+  renderGmaBridge(); renderGmaChecks(); renderTraj(); renderGmaVerdict();
+}
+
+/* ══════════════════════════════════════════════════════
+   MÓDULO HINE · Hammersmith Infant Neurological Examination
+   Estructura y puntuación: Haataja L et al. J Pediatr 1999;135:153-61
+   Reglas y cortes: notas de orientación oficiales, 20.12.2023
+   Este módulo NO reproduce la proforma: solo registra el puntaje
+   por ítem y aplica la aritmética y los cortes publicados.
+   ══════════════════════════════════════════════════════ */
+
+var HDOM = {
+  cn:{rom:"I",   name:"Pares craneales", max:15},
+  po:{rom:"II",  name:"Postura",         max:18},
+  mo:{rom:"III", name:"Movimientos",     max:6},
+  to:{rom:"IV",  name:"Tono",            max:24},
+  re:{rom:"V",   name:"Reflejos",        max:15}
+};
+
+var HITEMS = [
+ {n:1,  d:"cn", t:"Apariencia facial",            o:"Sonríe o reacciona a los estímulos cerrando los ojos y gesticulando"},
+ {n:2,  d:"cn", t:"Movimientos oculares",         o:"Movimientos oculares conjugados normales, sin desviación ni movimientos anormales"},
+ {n:3,  d:"cn", t:"Respuesta visual",             o:"Sigue el blanco en un arco completo, a 20–30 cm y unos 3°/segundo"},
+ {n:4,  d:"cn", t:"Respuesta auditiva",           o:"Reacciona al sonajero desde ambos lados, probados por separado y fuera de la vista"},
+ {n:5,  d:"cn", t:"Succión y deglución",          o:"Buena succión y buena deglución"},
+ {n:6,  d:"po", t:"Cabeza en sedestación",        o:"Recta, en la línea media. Sostener lo más bajo posible, nunca por los hombros"},
+ {n:7,  d:"po", t:"Tronco en sedestación",        o:"Espalda realmente recta la mayor parte del tiempo. Si necesita apoyo alto en hombros, puntúa 0"},
+ {n:8,  d:"po", t:"Brazos en reposo",             o:"Posición neutra, central, rectos o ligeramente flexionados, sin postura fija"},
+ {n:9,  d:"po", t:"Manos",                        o:"Manos abiertas la mayor parte del tiempo, sin posturas fijas"},
+ {n:10, d:"po", t:"Piernas",                      o:"Sedestación larga con espalda y piernas rectas; en supino y bipedestación, neutras", avg:"Observar en supino, sedestación y bipedestación y promediar los puntajes"},
+ {n:11, d:"po", t:"Pies",                         o:"Centrales en posición neutra, dedos rectos entre flexión y extensión", avg:"Observar en supino y bipedestación y promediar los puntajes"},
+ {n:12, d:"mo", t:"Cantidad de movimientos",      o:"Normal"},
+ {n:13, d:"mo", t:"Calidad de movimientos",       o:"Libres, alternantes y suaves"},
+ {n:14, d:"to", t:"Signo de la bufanda",          o:"El codo alcanza la línea media o la cruza hacia la mejilla contralateral"},
+ {n:15, d:"to", t:"Elevación pasiva del hombro",  o:"Se encuentra resistencia, vencible esperando un par de segundos"},
+ {n:16, d:"to", t:"Pronosupinación",              o:"Pronación y supinación completas en 180°, sin resistencia"},
+ {n:17, d:"to", t:"Aductores de cadera",          o:"Ángulo de 150° a 80°, con caderas sin flexionar y rodillas extendidas"},
+ {n:18, d:"to", t:"Ángulo poplíteo",              o:"Ángulo de 150° a 100°, con las nalgas apoyadas en la cama"},
+ {n:19, d:"to", t:"Dorsiflexión del tobillo",     o:"Ángulo de 30° a 85°, con rodilla y cadera extendidas"},
+ {n:20, d:"to", t:"Tracción a sentado",           o:"Sin retraso cefálico al ser traccionado por ambas muñecas"},
+ {n:21, d:"to", t:"Suspensión ventral",           o:"Espalda, extremidades y cabeza en posición óptima al sostenerlo horizontal"},
+ {n:22, d:"re", t:"Protección del brazo",         o:"Respuesta activa: el brazo baja, la mano se abre, los dedos se extienden y carga peso"},
+ {n:23, d:"re", t:"Suspensión vertical · pataleo",o:"Patalea simétricamente, sostenido bajo las axilas y sin tocar superficie"},
+ {n:24, d:"re", t:"Inclinación lateral",          o:"Respuesta viva: tronco curvándose hacia arriba con elevación de pierna y hombro"},
+ {n:25, d:"re", t:"Paracaídas anterior",          o:"Respuesta viva y simétrica, con las manos abiertas sobre la superficie", lock6:true},
+ {n:26, d:"re", t:"Reflejos tendinosos",          o:"Fácilmente provocables en bíceps, rodilla y tobillo"}
+];
+
+var MILES = [
+ {k:"cab", t:"Control cefálico", opts:["No sostiene la cabeza · normal hasta 3 m","Bambolea · normal hasta 4 m","Sostenida todo el tiempo · normal desde 5 m"]},
+ {k:"sed", t:"Sedestación", opts:["No se sienta","Con apoyo en las caderas · 4 m","Se apoya en las manos · 6 m","Sedestación estable · 7–8 m","Pivota, rota sentado · 9 m"]},
+ {k:"pre", t:"Prensión voluntaria · anotar lado", opts:["Sin prensión","Usa la mano completa","Índice y pulgar, prensión inmadura","Pinza"]},
+ {k:"pat", t:"Pataleo en supino", opts:["Sin pataleo","Horizontal, no levanta las piernas","Vertical, hacia arriba · 3 m","Toca la pierna · 4–5 m","Toca los dedos del pie · 5–6 m"]},
+ {k:"rod", t:"Rodamiento · anotar por qué lados", opts:["Sin rodamiento","Rueda a un lado · 4 m","Prono a supino · 6 m","Supino a prono · 6 m"]},
+ {k:"gat", t:"Gateo · anotar si se desplaza sentado", opts:["No levanta la cabeza","Sobre los codos · 3 m","Sobre las manos extendidas · 4 m","Reptación sobre el abdomen · 8 m","Cuatro puntos, manos y rodillas · 10 m"]},
+ {k:"bip", t:"Bipedestación", opts:["No carga peso","Carga peso · 4 m","De pie con apoyo · 7 m","De pie sin apoyo · 12 m"]},
+ {k:"mar", t:"Marcha", opts:["Rebote · 6 m","Apoyo lateral, camina agarrado · 12 m","Marcha independiente · hasta 15 m"]}
+];
+
+var BEHS = [
+ {k:"con", t:"Estado de conciencia", opts:["1 · Inarousable","2 · Somnoliento","3 · Duerme pero despierta con facilidad","4 · Despierto pero sin interés","5 · Pierde el interés","6 · Mantiene el interés"]},
+ {k:"emo", t:"Estado emocional", opts:["1 · Irritable, no consolable","2 · Irritable, el cuidador lo consuela","3 · Irritable cuando se lo aborda","4 · Ni feliz ni infeliz","5 · Feliz y sonriente"]},
+ {k:"soc", t:"Orientación social", opts:["1 · Evitativo, retraído","2 · Vacilante","3 · Acepta el acercamiento","4 · Amistoso"]}
+];
+
+/* ── Interacción ── */
+function hSet(n, v){
+  var it = HITEMS.filter(function(x){ return x.n === n; })[0];
+  if (it.lock6 && state.age !== null && state.age < 6) return;
+  state.hine.sc[n] = (state.hine.sc[n] === v) ? undefined : v;
+  renderHine();
+}
+function hSide(n, side, v){
+  if (!state.hine.side[n]) state.hine.side[n] = {};
+  state.hine.side[n][side] = (state.hine.side[n][side] === v) ? undefined : v;
+  renderHine();
+}
+function hAsym(n){
+  state.hine.asym[n] = !state.hine.asym[n];
+  if (!state.hine.asym[n]) delete state.hine.side[n];
+  renderHine();
+}
+function hMile(k, v){ state.hine.miles[k] = v; }
+function hBeh(k, v){ state.hine.behs[k] = v; renderHineBeh(); }
+
+/* ── Puntaje de un ítem ── */
+function hItemScore(n){
+  var it = HITEMS.filter(function(x){ return x.n === n; })[0];
+  if (it.lock6 && state.age !== null && state.age < 6) return 0;
+  if (state.hine.asym[n]){
+    var s = state.hine.side[n] || {};
+    if (s.R === undefined || s.L === undefined) return null;
+    return (s.R + s.L) / 2;
+  }
+  var v = state.hine.sc[n];
+  return (v === undefined) ? null : v;
+}
+
+function hCompute(){
+  var r = {total:0, byDom:{}, maxDom:{}, missing:[], asymCount:0, lockedZero:false};
+  Object.keys(HDOM).forEach(function(k){ r.byDom[k] = 0; r.maxDom[k] = HDOM[k].max; });
+  HITEMS.forEach(function(it){
+    if (state.hine.asym[it.n]) r.asymCount++;
+    var s = hItemScore(it.n);
+    if (s === null){ r.missing.push(it.n); return; }
+    r.total += s; r.byDom[it.d] += s;
+  });
+  var locked = (state.age !== null && state.age < 6);
+  r.lockedZero = locked;
+  r.maxAttainable = locked ? 75 : 78;
+  r.denom = 78 - 3 * r.missing.length;
+  return r;
+}
+
+/* ── Lectura de cortes ── */
+function hVerdict(r){
+  var a = state.age;
+  if (a === null) return null;
+  var v = {flags:[], opt:null, cp:null};
+  var t = r.total;
+
+  /* Optimalidad por edad */
+  if (a < 4.5){
+    v.opt = {lo:65, alt:67, txt:"A los 3 meses las notas oficiales sitúan la optimalidad en torno a <b>65</b> (rango 62–69) y Romeo 2016 en <b>67 o más</b>."};
+  } else if (a < 7.5){
+    v.opt = {lo:70, alt:null, txt:"A los 6 meses Romeo 2016 sitúa la optimalidad en <b>70 o más</b>. Las notas oficiales indican que hacia los 6 a 7 meses el puntaje alcanza el rango del lactante mayor."};
+  } else if (a < 13){
+    v.opt = {lo:73, alt:72, txt:"De 9 a 12 meses Romeo 2016 sitúa la optimalidad en <b>73 o más</b>; Haataja 1999 da <b>más de 72</b> a los 12 meses en nacidos a término."};
+  } else {
+    v.opt = {lo:73, alt:null, txt:"A los 18 meses Haataja 1999 sitúa la optimalidad en <b>más de 73</b>."};
+  }
+
+  /* Riesgo de PC */
+  if (t < 40) v.cp = {lvl:3, txt:"Puntaje menor de 40: casi siempre indica parálisis cerebral grave."};
+  else if (a < 4.5 && t < 57) v.cp = {lvl:3, txt:"Menor de 57 a los 3 meses de edad corregida: altamente predictivo de parálisis cerebral bilateral. El metanálisis de Kuo sitúa el corte en menor de 58 con sensibilidad del 79.6 % y especificidad del 88.7 %."};
+  else if (a >= 11 && t < 66) v.cp = {lvl:3, txt:"Menor de 66 a los 12 meses de edad corregida: altamente predictivo de parálisis cerebral bilateral."};
+  else if (a > 5 && t < 73) v.cp = {lvl:2, txt:"Menor de 73 después de los 5 meses: sitúa al niño en riesgo de parálisis cerebral. El umbral abarca todos los tipos y severidades, y cuanto más bajo el puntaje, más severa tiende a ser."};
+  else v.cp = {lvl:0, txt:"El puntaje no cruza ninguno de los umbrales publicados de riesgo de parálisis cerebral para esta edad."};
+
+  /* Pronóstico motor 6-9 meses */
+  if (a >= 5.5 && a <= 9.5){
+    if (t > 66) v.flags.push({k:"info", b:"Pronóstico motor", t:"Puntaje mayor de 66 entre los 6 y 9 meses: asociado a marcha independiente en nacidos a término. En prematuros el umbral correspondiente es mayor de 60 a 64."});
+    else if (t > 40) v.flags.push({k:"warn", b:"Pronóstico motor", t:"Puntaje entre 40 y 66 entre los 6 y 9 meses: asociado a sedestación independiente, pero la mayoría de estos niños no camina a los 2 años. En la serie de encefalopatía hipóxico-isquémica de término de Haataja 2001, solo el 13 % con puntajes de 40 a 66 caminaba de forma independiente a los 2 años, y el 25 % a los 4 años."});
+  }
+
+  /* Asimetrías */
+  if (r.asymCount > 5){
+    v.flags.push({k:"warn", b:"Más de 5 ítems asimétricos", t:"Hay 2018 asoció más de 5 respuestas asimétricas con parálisis cerebral unilateral. Advertencia de las notas oficiales: en ese estudio la mediana de edad era de 15 meses, cuando la hemiplejía ya suele ser clínicamente evidente, y las asimetrías pequeñas no son infrecuentes en los primeros meses."});
+  } else if (r.asymCount > 0){
+    v.flags.push({k:"info", b:r.asymCount + " ítem(es) asimétrico(s)", t:"Registre además qué sitios fueron asimétricos y si la lateralidad fue consistente. El puntaje global por sí solo no detecta bien la parálisis cerebral unilateral: esos niños pueden no tener puntajes bajos."});
+  }
+
+  /* Ítems faltantes */
+  if (r.missing.length > 5){
+    v.flags.push({k:"warn", b:"Demasiados ítems sin puntuar", t:"Faltan " + r.missing.length + " ítems. Las notas oficiales aceptan hasta 5 ítems faltantes, calculando el global sobre 63 y no sobre 78, y documentándolo. Por encima de ese número no deben hacerse predicciones."});
+  } else if (r.missing.length){
+    v.flags.push({k:"warn", b:r.missing.length + " ítem(es) sin puntuar", t:"El global se calcula sobre " + r.denom + " y no sobre 78. Documente por qué no pudo realizarlos: los ítems faltantes pueden ser justamente los que inclinen la balanza."});
+  }
+
+  /* Prematuro extremo */
+  if (a < 4.5){
+    v.flags.push({k:"conflict", b:"Prematuro extremo a los 3 meses", t:"Los puntajes que predicen parálisis cerebral pueden ser más bajos que los umbrales generales: la mediana en prematuros extremos con buen desenlace a 2 años se reporta en 58, con rango de 47 a 69 (Romeo 2022). Aplicar el corte de 57 sin corregir por esto sobrediagnostica en esta población."});
+  }
+
+  /* Rango de validación */
+  if (a < 3 || a > 18){
+    v.flags.push({k:"warn", b:"Fuera del rango validado", t:"El HINE está validado de los 3 a los 18 meses. Se ha usado hasta los 2 años, pero a esa edad algunos ítems de reflejos y de suspensión son difíciles de obtener porque el niño se deja caer o rechaza la manipulación."});
+  }
+  return v;
+}
+
+/* ── Render ── */
+function segBtn(n, v, cur, side){
+  var on = (cur === v);
+  var cl = "on s" + (v === null ? "na" : v);
+  var fn = side ? ("hSide(" + n + ",'" + side + "'," + v + ")") : ("hSet(" + n + "," + v + ")");
+  return '<button class="' + (on ? cl : "") + (v === null ? " na" : "") + '" onclick="' + fn + '">' + (v === null ? "—" : v) + '</button>';
+}
+
+function renderHineItems(){
+  var h = "", lastD = "", locked = (state.age !== null && state.age < 6);
+  HITEMS.forEach(function(it){
+    if (it.d !== lastD){ h += '<p class="posbar">' + HDOM[it.d].rom + ' · ' + HDOM[it.d].name +
+                              ' <span style="color:var(--text-3);letter-spacing:0;text-transform:none">máx ' + HDOM[it.d].max + '</span></p>'; lastD = it.d; }
+    var lock = it.lock6 && locked;
+    var s = hItemScore(it.n);
+    h += '<div class="hitem' + (lock ? " zero" : "") + '"><div class="hitem-h">' +
+         '<span class="ex-n">' + (it.n < 10 ? "0" : "") + it.n + '</span><h4>' + it.t + '</h4>' +
+         (s === null ? '<span class="sc">–</span>'
+                     : '<span class="sc s' + (s >= 3 ? 5 : (s >= 1.5 ? 3 : 1)) + '">' + (s % 1 ? s.toFixed(1) : s) + '</span>') +
+         '</div>';
+    if (lock){
+      h += '<div class="hlock">Antes de los 6 meses post-término se puntúa <b>0 para todos los lactantes</b> y no es necesario explorarlo. No cuenta como ítem faltante: el denominador sigue siendo 78 y el máximo alcanzable a esta edad es 75.</div>';
+    } else {
+      h += '<p class="hopt"><b>Óptimo (3):</b> ' + it.o + (it.avg ? '<br><b>Promediar:</b> ' + it.avg : '') + '</p>';
+      if (state.hine.asym[it.n]){
+        var sd = state.hine.side[it.n] || {};
+        h += '<div class="hside"><span class="sl">D</span><div class="seg">' +
+             [3,2,1,0,null].map(function(v){ return segBtn(it.n, v, sd.R, "R"); }).join("") + '</div></div>';
+        h += '<div class="hside"><span class="sl">I</span><div class="seg">' +
+             [3,2,1,0,null].map(function(v){ return segBtn(it.n, v, sd.L, "L"); }).join("") + '</div></div>';
+      } else {
+        h += '<div class="seg">' + [3,2,1,0,null].map(function(v){ return segBtn(it.n, v, state.hine.sc[it.n]); }).join("") + '</div>';
+      }
+      h += '<div class="hasym"><label><input type="checkbox"' + (state.hine.asym[it.n] ? " checked" : "") +
+           ' onchange="hAsym(' + it.n + ')"> Respuesta asimétrica — puntuar cada lado y promediar</label></div>';
+    }
+    h += '</div>';
+  });
+  document.getElementById("hineHost").innerHTML = h;
+}
+
+function renderHineResult(r){
+  var h = "";
+  h += '<div class="asymbox"><div><div class="al">Asimetrías</div><div class="av">' + r.asymCount + '</div></div>' +
+       '<div class="at">Salida independiente del puntaje global. Anote qué sitios fueron asimétricos y si la lateralidad fue consistente. ' +
+       (r.asymCount > 5 ? 'Más de 5 se ha asociado a parálisis cerebral unilateral (Hay 2018).' : 'Las asimetrías pequeñas no son infrecuentes en los primeros meses.') + '</div></div>';
+  document.getElementById("hineAsym").innerHTML = h;
+
+  var a = state.age;
+  var out = '<div class="verdict ' + (a === null ? "pend" : (r.missing.length > 5 ? "pend" : "normal")) + '" style="' +
+            (a !== null && r.missing.length <= 5 ? "background:var(--surface-2);border-color:var(--line)" : "") + '">' +
+            '<p class="cls" style="color:var(--gold)">' + (r.total % 1 ? r.total.toFixed(1) : r.total) +
+            ' <span style="font-size:19px;color:var(--text-3)">/ ' + r.denom + '</span></p><div class="meta">';
+  out += 'Máximo alcanzable a esta edad: <b>' + r.maxAttainable + '</b>' +
+         (r.lockedZero ? ' — el paracaídas anterior aporta 0 obligatorio antes de los 6 meses. El denominador sigue siendo 78 y el puntaje no debe reescalarse.' : '.') +
+         (r.missing.length ? ' Hay ' + r.missing.length + ' ítem(es) sin puntuar: ' + r.missing.join(", ") + '.' : '');
+  out += '</div></div>';
+
+  out += '<table class="tbl" style="margin-top:16px"><thead><tr><th>Dominio</th><th>Puntaje</th><th>Proporción</th></tr></thead><tbody>';
+  Object.keys(HDOM).forEach(function(k){
+    var d = HDOM[k], v = r.byDom[k], pct = v / d.max;
+    var cl = pct < 0.55 ? "low" : (pct < 0.8 ? "mid" : "hi");
+    out += '<tr><td>' + d.rom + ' · ' + d.name + '</td><td class="n">' + (v % 1 ? v.toFixed(1) : v) + ' / ' + d.max + '</td>' +
+           '<td><div class="fbar"><i class="' + cl + '" style="width:' + Math.round(pct*100) + '%"></i></div></td></tr>';
+  });
+  out += '</tbody></table>';
+  document.getElementById("hineResult").innerHTML = out;
+}
+
+function renderHineVerdict(r){
+  var host = document.getElementById("hineVerdict"), a = state.age;
+  if (a === null){
+    host.innerHTML = '<div class="alert warn"><b>Falta la edad corregida</b>Todos los puntos de corte del HINE son específicos por edad. Ingrésela en la pestaña Evaluación.</div>';
+    return;
+  }
+  var v = hVerdict(r), h = "";
+  var opt = v.opt, meets = (opt.alt ? (r.total >= Math.max(opt.lo, opt.alt)) : (r.total >= opt.lo));
+  var partial = opt.alt && r.total >= Math.min(opt.lo, opt.alt) && r.total < Math.max(opt.lo, opt.alt);
+
+  h += '<div class="alert ' + (meets ? "info" : (partial ? "conflict" : "warn")) + '"><b>Optimalidad</b>' + opt.txt +
+       ' El puntaje actual es ' + (r.total % 1 ? r.total.toFixed(1) : r.total) + ', de modo que ' +
+       (meets ? 'alcanza el umbral de optimalidad por ambas fuentes.'
+              : (partial ? '<b>alcanza una fuente pero no la otra</b>. La discordancia entre umbrales es real y no se resuelve.'
+                         : 'no alcanza el umbral de optimalidad.')) + '</div>';
+
+  h += '<div class="alert ' + (v.cp.lvl >= 3 ? "warn" : (v.cp.lvl === 2 ? "conflict" : "info")) + '"><b>Riesgo de parálisis cerebral</b>' + v.cp.txt + '</div>';
+
+  v.flags.forEach(function(f){ h += '<div class="alert ' + f.k + '"><b>' + f.b + '</b>' + f.t + '</div>'; });
+
+  h += '<div class="note"><b>Lo que el puntaje no resuelve</b>La predicción de movilidad y de parálisis cerebral con el HINE es buena, pero no es del 100 %. Las circunstancias clínicas, los hallazgos de neuroimagen y el patrón de los hallazgos —no solo el total— siempre importan. El examen no está validado en cohortes amplias de síndromes genéticos, enfermedades metabólicas, trastornos neuromusculares congénitos ni cardiopatía congénita.</div>';
+  host.innerHTML = h;
+}
+
+function renderHineMiles(){
+  var h = "";
+  MILES.forEach(function(m){
+    h += '<div class="mile"><div><label class="f">' + m.t + '</label><select onchange="hMile(\'' + m.k + '\',this.value)">' +
+         '<option value="">— sin registrar —</option>' +
+         m.opts.map(function(o,i){ return '<option value="' + i + '"' + (state.hine.miles[m.k] == i ? " selected" : "") + '>' + o + '</option>'; }).join("") +
+         '</select></div><div><label class="f">Edad</label><input type="text" placeholder="obs / ref" value="' +
+         (state.hine.mileAge[m.k] || "") + '" oninput="state.hine.mileAge[\'' + m.k + '\']=this.value"></div></div>';
+  });
+  document.getElementById("mileHost").innerHTML = h;
+}
+
+function renderHineBeh(){
+  var h = "", tot = 0, any = false;
+  BEHS.forEach(function(b){
+    var val = state.hine.behs[b.k];
+    if (val !== undefined && val !== ""){ tot += parseInt(val, 10); any = true; }
+    h += '<div class="beh"><label class="f">' + b.t + '</label><select onchange="hBeh(\'' + b.k + '\',this.value)">' +
+         '<option value="">— sin registrar —</option>' +
+         b.opts.map(function(o,i){ return '<option value="' + (i+1) + '"' + (val == (i+1) ? " selected" : "") + '>' + o + '</option>'; }).join("") +
+         '</select></div>';
+  });
+  h += '<div class="note"><b>Puntaje conductual: ' + (any ? tot + ' / 15' : 'sin registrar') + '</b>' +
+       'Queda expresamente fuera del puntaje global. Un examen realizado sobre un lactante irritable, somnoliento o que pierde el interés no es comparable con uno realizado en condiciones óptimas — el puntaje conductual es lo que permite juzgar esa diferencia al releer el registro.</div>';
+  document.getElementById("behHost").innerHTML = h;
+}
+
+function renderHineBridge(){
+  var a = state.age, h;
+  if (a === null){
+    h = '<div class="alert info" style="margin-top:16px"><b>Lugar del HINE en la secuencia</b>' +
+        'La GMA cubre hasta las 20 semanas post-término, el HINE está validado de los 3 a los 18 meses y el INFANIB alcanza su mejor especificidad hacia los 9 y 10 meses. ' +
+        'Ingrese la edad corregida en la pestaña Evaluación para ver cuál corresponde.</div>';
+  } else {
+    var k = a < 3 ? "warn" : "info";
+    h = '<div class="alert ' + k + '" style="margin-top:16px"><b>Lugar del HINE a los ' + a.toFixed(1) + ' meses</b>';
+    if (a < 3) h += 'Por debajo de los 3 meses el HINE no está validado. La herramienta de esta franja es la GMA: la ventana fidgety de expresión plena va de las 49 a las 55 semanas EPM.';
+    else if (a < 6) h += 'Franja de solapamiento con la GMA. Las dos son complementarias y su combinación con neuroimagen alcanza S 97.86 % y E 99.22 % (Morgan 2019). El INFANIB todavía rinde poco a esta edad — S 62.2 % a los 3 meses.';
+    else if (a < 9) h += 'Los fidgety ya desaparecieron. El HINE está en pleno rango validado y aquí es donde aporta el pronóstico motor de marcha y sedestación. El INFANIB puede correr en paralelo.';
+    else h += 'Rango de mejor rendimiento de ambos: el HINE con umbral de optimalidad de 73 o más, y el INFANIB con su mejor especificidad reportada, 91.1 % a los 9 meses.';
+    h += '</div>';
+  }
+  document.getElementById("hineBridge").innerHTML = h;
+}
+
+function renderHine(){
+  renderHineBridge(); renderHineItems();
+  var r = hCompute();
+  renderHineResult(r); renderHineVerdict(r);
+  renderHineMiles(); renderHineBeh(); renderRailDispatch();
+}
+
+
+/* ══ Pestañas ══ */
+function setTab(t){
+  state.tab = t;
+  var i, b = document.querySelectorAll("#tabs button"), p = document.querySelectorAll(".panel");
+  for (i = 0; i < b.length; i++) b[i].className = (b[i].getAttribute("data-t") === t) ? "on" : "";
+  for (i = 0; i < p.length; i++) p[i].className = "panel" + (p[i].getAttribute("data-p") === t ? " on" : "");
+  renderRailDispatch();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* ══ Render de ítems ══ */
+function renderItems(){
+  var a = state.age, html = "", lastPos = "";
+  ITEMS.forEach(function(it){
+    if (it.pos !== lastPos){ html += '<p class="posbar">' + it.pos + '</p>'; lastPos = it.pos; }
+    var blocked = (a !== null && a < (it.start || 0));
+    var sc = itemScore(it, a);
+    html += '<div class="ex' + (blocked ? ' off' : '') + '"><div class="ex-h">' +
+            '<span class="ex-n">' + (it.n < 10 ? "0" : "") + it.n + '</span>' +
+            '<h3>' + it.title + '</h3>' +
+            '<span class="fchip">Factor ' + FACTORS[it.factor].rom + '</span>' +
+            (sc === null ? '<span class="sc">–</span>' : '<span class="sc s' + sc + '">' + sc + '</span>') +
+            '</div>';
+    if (blocked){
+      html += '<div class="ex-blocked">No se puntúa antes de los <b>' + it.start +
+              ' meses</b> de edad corregida. Aporta <b>0</b> al total, como la celda sombreada del formulario original.</div>';
+    } else {
+      if (it.rule && a !== null) html += '<div class="ex-rule">' + it.rule(a) + '</div>';
+      html += '<div class="opts">';
+      it.opts.forEach(function(o, i){
+        var osc = optScore(it, i, a);
+        var isExp = (a !== null && it.exp && o.stage === it.exp(a));
+        var selected = state.sel[it.n] === i;
+        html += '<label class="opt' + (selected ? ' sel' : '') + '">' +
+                '<input type="radio" name="it' + it.n + '"' + (selected ? ' checked' : '') +
+                ' onchange="pick(' + it.n + ',' + i + ')">' +
+                (ICONS[it.n] ? ICONS[it.n](i) : '') +
+                '<span class="ot">' + o.t + (osc !== null ? ' <b>· ' + osc + '</b>' : '') + '</span>' +
+                (isExp ? '<span class="exp">esperado</span>' : '') + '</label>';
+      });
+      html += '</div>';
+      if (it.flags && it.flags.length){
+        html += '<div class="flags">';
+        it.flags.forEach(function(fl){
+          var on = (state.flags[it.n] || {})[fl.k];
+          html += '<label><input type="checkbox"' + (on ? ' checked' : '') +
+                  ' onchange="toggleFlag(' + it.n + ',\'' + fl.k + '\')"> ' + fl.t + '</label>';
+        });
+        html += '</div>';
+      }
+      if (it.note)  html += '<div class="ex-note">' + it.note + '</div>';
+      if (it.annot) html += '<div class="ex-annot">' + it.annot + '</div>';
+    }
+    html += '</div>';
+  });
+  document.getElementById("itemHost").innerHTML = html;
+}
+function pick(n, i){ state.sel[n] = i; renderAll(); }
+function toggleFlag(n, k){
+  if (!state.flags[n]) state.flags[n] = {};
+  state.flags[n][k] = !state.flags[n][k];
+  renderAll();
+}
+
+/* ══ Riel ══ */
+function renderRailDispatch(){
+  if (state.tab === "hine") renderRailHine();
+  else renderRail(compute());
+}
+function renderRailHine(){
+  var r = hCompute(), h = "";
+  Object.keys(HDOM).forEach(function(k){
+    var d = HDOM[k], v = r.byDom[k];
+    h += '<div class="fbox"><div class="fill" style="height:' + Math.round(100*v/d.max) + '%"></div>' +
+         '<div class="fr"><div class="rn">' + d.rom + '</div><div class="rv">' + (v % 1 ? v.toFixed(1) : v) + '</div>' +
+         '<div class="rl">' + d.name + '</div></div></div>';
+  });
+  var lbl = r.missing.length > 5 ? "incompleto" : (state.age === null ? "sin edad" : (r.missing.length ? r.missing.length + " sin puntuar" : "HINE"));
+  h += '<div class="totbox' + (r.missing.length > 5 || state.age === null ? " pend" : "") + '"><div class="rn">GLOBAL</div>' +
+       '<div class="rv">' + (r.total % 1 ? r.total.toFixed(1) : r.total) + '<small>/' + r.denom + '</small></div>' +
+       '<div class="rl">' + lbl + '</div></div>';
+  document.getElementById("railHost").innerHTML = h;
+}
+function renderRail(r){
+  var band = state.age !== null ? ageBand(state.age) : null;
+  var cls  = (band && r.scoredAll) ? classify(r.total, band) : "pend";
+  var h = "";
+  ["I","II","III","IV","V"].forEach(function(k){
+    var f = FACTORS[k], v = r.byFactor[k], mx = r.maxFactor[k] || 20;
+    h += '<div class="fbox"><div class="fill" style="height:' + Math.round(100*v/mx) + '%"></div>' +
+         '<div class="fr"><div class="rn">' + f.rom + '</div><div class="rv">' + v + '</div>' +
+         '<div class="rl">' + f.name + '</div></div></div>';
+  });
+  h += '<div class="totbox' + (cls === "pend" ? " pend" : "") + '"><div class="rn">TOTAL</div>' +
+       '<div class="rv">' + (state.age === null ? "–" : r.total + '<small>/' + r.max + '</small>') + '</div>' +
+       '<div class="rl">' + (cls === "pend" ? (state.age === null ? "sin edad" : "incompleto") : CLSNAME[cls]) + '</div></div>';
+  document.getElementById("railHost").innerHTML = h;
+}
+
+/* ══ Resultado ══ */
+function renderResult(r){
+  var host = document.getElementById("resultHost"), a = state.age;
+  if (a === null){
+    host.innerHTML = '<div class="verdict pend"><p class="cls">Falta la edad corregida</p><div class="meta">' +
+      'Sin ella no se puede determinar la etapa esperada de cada ítem, ni qué ítems se puntúan, ni qué punto de corte aplica.</div></div>';
+    return;
+  }
+  var band = ageBand(a), cls = classify(r.total, band), complete = r.scoredAll;
+  var h = '<div class="verdict ' + (complete ? cls : "pend") + '">' +
+          '<p class="cls">' + (complete ? CLSNAME[cls] : "Evaluación incompleta") + '</p><div class="meta">' +
+          '<b class="big">' + r.total + '</b> puntos sobre ' + r.max + ' alcanzables a los ' + a.toFixed(1) +
+          ' meses de edad corregida.<br>Banda aplicada: <b>' + band.label + '</b> — anormal ≤ ' + band.abn +
+          ' · transitorio ' + (band.abn+1) + '–' + band.tr + ' · normal ≥ ' + (band.tr+1) + '.';
+  if (!complete) h += '<br><b>Faltan ' + r.pending.length + ' ítem(es):</b> ' + r.pending.join(", ") +
+                      '. La clasificación es provisional y solo puede subir.';
+  h += '</div>';
+  var w1 = band.abn, w2 = band.tr - band.abn, w3 = 100 - band.tr;
+  var pos = Math.max(0, Math.min(100, r.total));
+  h += '<div class="scale"><div class="mk"><i style="left:' + pos + '%">' + r.total + '</i></div><div class="bar">' +
+       '<i style="width:' + w1 + '%;background:#8E3B33"></i>' +
+       '<i style="width:' + w2 + '%;background:#B08A2E"></i>' +
+       '<i style="width:' + w3 + '%;background:#39805B"></i></div>' +
+       '<div class="ticks"><span>0</span><span>' + band.abn + '</span><span>' + band.tr + '</span><span>100</span></div></div></div>';
+  if (r.max < 100){
+    h += '<div class="note"><b>Techo reducido por edad</b>A los ' + a.toFixed(1) + ' meses hay ' + (20 - r.applicable) +
+         ' ítem(es) que aún no se puntúan y aportan cero. El máximo alcanzable es ' + r.max +
+         ', no 100. Los puntos de corte ya están calibrados para esto, de modo que el total no debe reescalarse.</div>';
+  }
+  host.innerHTML = h;
+}
+
+/* ══ Factores ══ */
+function renderFactors(r){
+  var host = document.getElementById("factorHost"), a = state.age;
+  if (a === null){ host.innerHTML = '<p style="color:var(--text-3);margin:0;font-size:14px">Disponible al ingresar la edad corregida.</p>'; return; }
+  var ref = (a < 9) ? NORMS[6] : NORMS[12];
+  var h = '<table class="tbl"><thead><tr><th>Factor</th><th>Puntos</th><th>Proporción del máximo</th><th>Media normal a ' +
+          ref.label + '</th></tr></thead><tbody>';
+  ["I","II","III","IV","V"].forEach(function(k){
+    var f = FACTORS[k], v = r.byFactor[k], mx = r.maxFactor[k], pct = mx ? v/mx : 0;
+    var cl = pct < 0.55 ? "low" : (pct < 0.8 ? "mid" : "hi");
+    h += '<tr><td>' + f.rom + ' · ' + f.name + '</td>' +
+         '<td class="n">' + (mx ? v + ' / ' + mx : '<span style="color:var(--text-3)">n/a</span>') + '</td>' +
+         '<td>' + (mx ? '<div class="fbar"><i class="' + cl + '" style="width:' + Math.round(pct*100) + '%"></i></div>'
+                      : '<span style="font-size:12.5px;color:var(--text-3)">ningún ítem a esta edad</span>') + '</td>' +
+         '<td class="n">' + ref.normal[k].toFixed(1) + '</td></tr>';
+  });
+  h += '<tr><td>Total</td><td class="n">' + r.total + ' / ' + r.max + '</td><td></td><td class="n">' +
+       ref.normal.T.toFixed(1) + '</td></tr></tbody></table>';
+  if (a < 9) h += '<div class="note">A esta edad el Factor III tiene el techo recortado porque varios de sus ítems aún no se puntúan. Un valor bajo no debe leerse como déficit vestibular.</div>';
+  host.innerHTML = h;
+}
+
+/* ══ Patrón ══ */
+function renderPattern(r){
+  var host = document.getElementById("patternHost"), a = state.age;
+  if (a === null){ host.innerHTML = '<p style="color:var(--text-3);margin:0;font-size:14px">Disponible al ingresar la edad corregida.</p>'; return; }
+  var p = {};
+  ["I","II","III","IV","V"].forEach(function(k){ p[k] = r.maxFactor[k] ? r.byFactor[k]/r.maxFactor[k] : 1; });
+  var fr = frenchDirection(a), asym = asymmetryEvidence(), H = [];
+
+  (function(){
+    var ev = [], lvl = 0;
+    if (p.II < 0.7){ ev.push("Factor II (cabeza y tronco) al " + Math.round(p.II*100) + " % del máximo: control axial por debajo de lo esperado"); lvl++; }
+    if (fr.seen >= 2 && fr.d >= 2){ ev.push("Ángulos franceses más abiertos que lo esperado (desviación +" + fr.d + "): mayor flexibilidad, no rigidez"); lvl++; }
+    if (state.sel[10] !== undefined && itemScore(ITEMS[9], a) <= 3) ev.push("Ítem 10 (tracción a sentado) con retraso cefálico");
+    if (state.sel[15] !== undefined && itemScore(ITEMS[14], a) <= 3) ev.push("Ítem 15: sedestación con espalda redondeada para la edad");
+    if (state.sel[18] === 1 || state.sel[18] === 2) ev.push("Ítem 18: carga de peso ausente o pobre");
+    H.push({name:"Hipotonía", lvl:lvl, ev:ev,
+      note:"El manual señala que la hipotonía es frecuente en el prematuro enfermo y que muchos casos se resuelven. La que no mejora, la que empeora, o la que no se acompaña de retraso cognitivo ni forma parte de un síndrome definido, exige estudio diagnóstico adicional."});
+  })();
+
+  (function(){
+    var ev = [], lvl = 0;
+    if (fr.seen >= 2 && fr.d <= -2){ ev.push("Ángulos franceses menos abiertos que lo esperado (desviación " + fr.d + "): patrón de rigidez en miembros inferiores"); lvl++; }
+    if (p.V < 0.7 && p.I >= 0.75){ ev.push("Factor V al " + Math.round(p.V*100) + " % con Factor I conservado al " + Math.round(p.I*100) + " %: compromiso predominante de piernas"); lvl++; }
+    if (p.IV < 0.7) ev.push("Factor IV (piernas) al " + Math.round(p.IV*100) + " % del máximo");
+    if (state.sel[19] === 1 || state.sel[19] === 2) ev.push("Ítem 19: apoyo en puntas sostenido");
+    if (itemScore(ITEMS[5], a) === 1) ev.push("Ítem 6: dorsiflexión del pie limitada");
+    H.push({name:"Diplejía espástica", lvl:lvl, ev:ev,
+      note:"Descrita clásicamente en el prematuro y confinada a las piernas, aunque el manual advierte que también ocurre en nacidos a término y que muchos casos tienen compromiso leve de brazos, a menudo como torpeza fina."});
+  })();
+
+  (function(){
+    var ev = [], lvl = 0;
+    if (p.I < 0.7){ ev.push("Factor I (espasticidad) al " + Math.round(p.I*100) + " %: compromiso de tono axial y de miembros superiores"); lvl++; }
+    if (p.II < 0.6){ ev.push("Factor II al " + Math.round(p.II*100) + " %"); lvl++; }
+    if (p.V < 0.6) ev.push("Factor V al " + Math.round(p.V*100) + " %");
+    if (p.I < 0.7 && p.II < 0.7 && p.V < 0.7) ev.push("Compromiso simultáneo de los tres factores de tono y postura: patrón global, no segmentario");
+    H.push({name:"Tetraparesia espástica / discinesia", lvl:lvl, ev:ev,
+      note:"Involucra las cuatro extremidades en combinaciones variables. El manual advierte que este patrón tiende a puntuar peor entre los 6 y los 18 meses aunque la lesión sea no progresiva; el empeoramiento del puntaje no implica enfermedad progresiva."});
+  })();
+
+  H.push({name:"Hemiparesia espástica", lvl: asym.length >= 2 ? 2 : (asym.length === 1 ? 1 : 0), ev:asym,
+    note:"Compromiso de un solo lado, en general con mayor afectación del brazo que de la pierna. Es la forma leve con menor probabilidad de resolverse. Una hemiparesia que empeora obliga a reevaluación por neurología."});
+
+  H.sort(function(x,y){ return y.lvl - x.lvl; });
+
+  var h = "";
+  if (state.sel[1] === 0 || state.sel[1] === 1){
+    h += '<div class="alert warn"><b>Empuñamiento registrado</b>El manual es explícito: el empuñamiento no es normal a ninguna edad y se puntúa 1 siempre. Es indicador de tono extensor aumentado y pesa a favor de los patrones espásticos.</div>';
+  }
+  H.forEach(function(x){
+    var klass = x.lvl >= 2 ? "support" : (x.lvl === 1 ? "partial" : "");
+    var lbl   = x.lvl >= 2 ? "Sostenida" : (x.lvl === 1 ? "Soporte parcial" : "Sin soporte");
+    h += '<div class="hyp ' + klass + '"><span class="lvl">' + lbl + '</span><h4>' + x.name + '</h4>';
+    h += x.ev.length ? '<ul>' + x.ev.map(function(e){ return '<li>' + e + '</li>'; }).join("") + '</ul>'
+                     : '<p class="foot">Ningún hallazgo de esta evaluación apunta a esta categoría. La ausencia de soporte no equivale a exclusión, sobre todo antes de los 6 meses.</p>';
+    h += '<p class="foot">' + x.note + '</p></div>';
+  });
+  h += '<div class="note"><b>Cómo leer este bloque</b>Las cuatro categorías se presentan siempre, en paralelo y con su evidencia explícita. El INFANIB cuantifica integridad neuromotora; no asigna topografía. La categoría, cuando el resultado es anormal, la elige quien examina integrando exploración, antecedentes perinatales y neuroimagen.</div>';
+  host.innerHTML = h;
+}
+
+/* ══ Incertidumbre ══ */
+function renderUncert(r){
+  var host = document.getElementById("uncertHost"), a = state.age, h = "";
+  if (a === null){ host.innerHTML = '<div class="alert warn"><b>Sin edad corregida</b>Toda la interpretación depende de este dato.</div>'; return; }
+  var band = ageBand(a);
+
+  if (!r.scoredAll) h += '<div class="alert warn"><b>Evaluación incompleta</b>Faltan los ítems ' + r.pending.join(", ") +
+                         '. El total mostrado es un piso, no el puntaje final.</div>';
+
+  if (r.scoredAll){
+    var dA = Math.abs(r.total - band.abn), dT = Math.abs(r.total - band.tr);
+    if (dA <= 3 || dT <= 3){
+      var near = dA <= dT ? ("anormal / transitorio en " + band.abn + "–" + (band.abn+1))
+                          : ("transitorio / normal en " + band.tr + "–" + (band.tr+1));
+      h += '<div class="alert warn"><b>El total está a ' + Math.min(dA,dT) + ' punto(s) de un corte</b>' +
+           'El puntaje queda junto al límite ' + near + '. Un solo ítem calificado de otra manera cambiaría la categoría. ' +
+           'Trátelo como limítrofe y priorice la reevaluación seriada sobre la clasificación puntual.</div>';
+    }
+  }
+
+  if (a >= 8 && a < 9){
+    var alt = classify(r.total, {abn:54, tr:71});
+    h += '<div class="alert conflict"><b>Solapamiento de bandas en el formulario</b>' +
+         'El manual imprime «4 a 8 meses» y «8 meses o más», de modo que 8.0–8.9 pertenece a ambas. Aquí se aplicó la banda de ≥8 meses, la más exigente. ' +
+         'Con la banda de 4–8 meses el resultado sería <b>' + CLSNAME[alt] + '</b>' +
+         (alt !== classify(r.total, band) ? ', es decir discordante con el resultado principal.' : ', coincidente con el resultado principal.') + '</div>';
+  }
+
+  var s6 = state.sel[6];
+  if (a < 3 && s6 !== undefined && !(state.flags[6] || {}).asym){
+    var v94 = [1,3,5,5,3][s6], v85 = [1,3,5,3,1][s6];
+    if (v94 !== v85){
+      var used = state.version === "1985" ? v85 : v94, other = state.version === "1985" ? v94 : v85;
+      var altT = r.total - used + other, altC = classify(altT, band);
+      h += '<div class="alert conflict"><b>Las dos versiones publicadas discrepan en este caso</b>' +
+           'El ítem 6 con «' + ITEMS[5].opts[s6].t + '» a los ' + a.toFixed(1) + ' meses puntúa <b>' + v94 +
+           '</b> según el manual de 1994 y <b>' + v85 + '</b> según el formulario de 1985. Con la versión no seleccionada el total sería ' +
+           altT + ' y la clasificación <b>' + CLSNAME[altC] + '</b>' +
+           (altC !== classify(r.total, band) ? ', discordante con el resultado principal.' : ', coincidente con el resultado principal.') +
+           ' Ambas versiones están publicadas por la misma autora.</div>';
+    }
+  }
+
+  if (a < 4){
+    h += '<div class="alert warn"><b>Capacidad discriminativa limitada a esta edad</b>' +
+         'En la cohorte colombiana de programa canguro (Charpak 2016, n=5857) el INFANIB a los 3 meses rindió S 62.2 % y E 76.1 % (ROC 0.69), ' +
+         'frente a S 77.2 % y E 91.1 % a los 9 meses. La versión china tampoco alcanzó validez útil en prematuros a los 7 meses o antes. ' +
+         'Un resultado normal a esta edad no descarta parálisis cerebral.</div>';
+  } else if (a < 7){
+    h += '<div class="alert info"><b>Rendimiento intermedio</b>A los 6 meses de edad corregida, Charpak 2016 reportó S 77.5 % y E 74.4 % (ROC 0.76). La especificidad mejora de forma marcada hacia los 9 y 10 meses.</div>';
+  } else {
+    h += '<div class="alert info"><b>Ventana de mejor rendimiento</b>A partir de los 9 meses de edad corregida el INFANIB alcanza su mejor especificidad reportada (91.1 %, Charpak 2016), y la validez predictiva en prematuros mejora claramente hacia los 10 meses (Liao 2012).</div>';
+  }
+
+  var frd = frenchDirection(a);
+  if (frd.seen >= 3 && Math.abs(frd.d) >= 2){
+    h += '<div class="alert info"><b>Dirección de la desviación en ángulos franceses</b>' +
+      (frd.d > 0
+        ? 'Los ángulos están <b>más abiertos</b> que lo esperado (desviación +' + frd.d + '). El puntaje penaliza la desviación en ambos sentidos, de modo que un Factor V bajo refleja aquí hiperlaxitud, no rigidez. El total no distingue esa dirección; el perfil sí.'
+        : 'Los ángulos están <b>menos abiertos</b> que lo esperado (desviación ' + frd.d + '), lo que orienta a hipertonía. El total no distingue esa dirección; el perfil sí.') + '</div>';
+  }
+
+  if (r.maxFactor.III < 20){
+    h += '<div class="alert conflict"><b>Factor III con techo recortado</b>A los ' + a.toFixed(1) + ' meses su máximo es ' +
+         r.maxFactor.III + ', no 20. Además el manual se contradice sobre este factor: el texto dice que a los 6 meses «solo un ítem se puntúa», ' +
+         'pero la Tabla 3.3 le asigna una media de 7.2 en normales, imposible con un único ítem de máximo 5. No lo interprete de forma aislada antes de los 9 meses.</div>';
+  }
+
+  if (!h) h += '<div class="alert info"><b>Sin señales de alerta metodológica</b>Ninguna zona de incertidumbre detectada para esta combinación de edad y puntaje.</div>';
+  host.innerHTML = h;
+}
+
+/* ══ Seguimiento ══ */
+function renderRec(r){
+  var host = document.getElementById("recHost"), a = state.age;
+  if (a === null){ host.innerHTML = '<p style="color:var(--text-3);margin:0;font-size:14px">Disponible al ingresar la edad corregida.</p>'; return; }
+  var band = ageBand(a), cls = classify(r.total, band), h = "";
+
+  if (!r.scoredAll) h += '<div class="alert warn"><b>Recomendación provisional</b>Faltan ' + r.pending.length +
+                         ' ítem(es). Complete la evaluación antes de tomar decisiones de referencia.</div>';
+
+  h += '<h4>Capa 1 · Manual INFANIB, Ellison 1994</h4><ul>';
+  if (cls === "normal"){
+    h += '<li>Resultado dentro del rango normal para la banda de ' + band.label + '. No procede referencia por este tamizaje.</li>' +
+         '<li>Si se trata de un prematuro que ya recuperó tono normal hacia las 40 semanas posconcepcionales, el manual describe el «concepto de <i>clearing</i>»: esos lactantes tienden a mantenerse normales en el tono. Requiere que la evaluación la haya hecho un examinador competente, no una revisión breve al alta.</li>';
+  } else if (cls === "transient"){
+    h += '<li>Anormalidad transitoria: categoría intermedia entre normal y anormal. Los cortes se fijaron de modo que el examinador pueda tener confianza en que estas anormalidades tienen probabilidad alta de mejorar.</li>' +
+         '<li>De 999 lactantes de UCIN, el 21 % fue transitorio a los 6 meses y el 79 % de ellos se normalizó hacia los 15 meses (Ellison et al. 1982).</li>' +
+         '<li><b>No dar de alta del seguimiento:</b> el manual advierte que los lactantes con anormalidad transitoria entre los 6 y los 15 meses tienen después más problemas escolares en cognición, conducta, motricidad o lenguaje.</li>';
+  } else {
+    h += '<li>Resultado anormal. El formulario exige elegir una categoría: tetraparesia espástica/discinesia, hemiparesia espástica, diplejía espástica o hipotonía.</li>' +
+         '<li>Referencia a evaluación neurológica y a programa de intervención. El manual señala que la mayor parte de la anormalidad neurológica se identifica bien a los 6 meses en tono y postura.</li>' +
+         '<li>Si el patrón es de tetraparesia-discinesia, anticipe que el puntaje puede empeorar entre los 6 y los 18 meses sin que ello signifique lesión progresiva.</li>';
+  }
+  h += '</ul><h4>Capa 2 · Evidencia posterior al manual</h4><ul>';
+  if (cls === "abnormal"){
+    h += '<li><b>Referencia prioritaria</b> a neurología pediátrica y a intervención temprana, sin esperar reevaluación de confirmación. El diagnóstico o la designación de «alto riesgo de parálisis cerebral» habilita intervención en la ventana de mayor neuroplasticidad (Novak 2017).</li>' +
+         '<li><b>Triangular, no sustituir.</b> El INFANIB es tamizaje. La combinación de neuroimagen, GMA y HINE alcanza S 97.86 % y E 99.22 % (Morgan 2019). Use GMA si la edad corregida es menor de 5 meses y HINE a partir de los 3 meses.</li>' +
+         '<li>Documentar la trayectoria: repetir INFANIB en 4 a 8 semanas, ya que la evolución seriada informa más que un puntaje aislado.</li>';
+  } else if (cls === "transient"){
+    h += '<li><b>Reevaluar con INFANIB en 1 a 3 meses.</b> Los estudios de validación reclasificaron al grupo transitorio tras ese intervalo antes de considerarlo normal o anormal (Soleimani 2007).</li>' +
+         '<li>Considerar referencia a estimulación temprana o fisioterapia pediátrica mientras se define la trayectoria; no requiere esperar la reclasificación.</li>' +
+         '<li>Mantener vigilancia del neurodesarrollo hasta edad preescolar, no solo hasta el año.</li>';
+  } else {
+    h += '<li>Continuar el cronograma de seguimiento del lactante de alto riesgo. En la cohorte de programa canguro se aplicó a los 3, 6, 9 y 12 meses de edad corregida (Charpak 2016).</li>' +
+         '<li>Un INFANIB normal <b>no descarta</b> parálisis cerebral, sobre todo antes de los 6 meses. Con factores de riesgo neonatales relevantes, mantener la vía de detección temprana con GMA o HINE con independencia de este resultado.</li>';
+  }
+  if (a < 5) h += '<li>A esta edad corregida la herramienta de mayor rendimiento disponible es la GMA: la ausencia de movimientos <i>fidgety</i> es altamente predictiva. Si su servicio dispone de GMA, tiene prioridad sobre el INFANIB.</li>';
+  h += '</ul><h4>Próximas evaluaciones sugeridas</h4><ul>';
+  if (cls === "abnormal") h += '<li><b>Reevaluación en 4 a 8 semanas</b>, alrededor de los ' + (a+1.5).toFixed(1) + ' meses de edad corregida, además del cronograma habitual.</li>';
+  else if (cls === "transient") h += '<li><b>Reevaluación en 1 a 3 meses</b>, entre los ' + (a+1).toFixed(1) + ' y los ' + (a+3).toFixed(1) + ' meses de edad corregida.</li>';
+  var nv = nextVisits(a);
+  h += nv.length ? '<li>Cronograma de alto riesgo: ' + nv.map(function(x){ return x + " meses EC"; }).join(" · ") + '.</li>'
+                 : '<li>El lactante superó el cronograma habitual de tamizaje neuromotor del primer año. Continuar con vigilancia del desarrollo del segundo año.</li>';
+  h += '</ul><div class="note">Ambas capas se muestran por separado a propósito. Lo etiquetado como manual proviene del texto de Ellison; lo etiquetado como evidencia posterior proviene de estudios de validación y de las guías de detección temprana de parálisis cerebral, que no formaban parte del instrumento original.</div>';
+  host.innerHTML = h;
+}
+
+/* ══ Edad ══ */
+function renderAge(info){
+  var big = document.getElementById("ageBig"), sub = document.getElementById("ageSub");
+  if (info.age === null){
+    big.textContent = "—";
+    sub.textContent = info.err || "Ingrese fecha de nacimiento, EG al nacer y fecha de examen, o escriba la edad corregida directamente.";
+    document.getElementById("ageWarn").innerHTML = "";
+    return;
+  }
+  big.textContent = info.age.toFixed(1) + " meses";
+  sub.textContent = (info.src === "manual")
+    ? "Valor ingresado manualmente. Banda de puntos de corte: " + ageBand(info.age).label + "."
+    : "Edad cronológica " + info.chrono.toFixed(1) + " meses, menos " + info.corrDays +
+      " días de corrección por prematuridad. Banda de puntos de corte: " + ageBand(info.age).label + ".";
+  document.getElementById("ageWarn").innerHTML = info.age > 18
+    ? '<div class="alert warn" style="margin-top:12px"><b>Fuera del rango del instrumento</b>La edad corregida supera los 18 meses. Los puntos de corte no están validados más allá de ese punto.</div>' : "";
+}
+
+/* ══ Render maestro ══ */
+function renderAll(){
+  state.version = document.getElementById("pver").value;
+  var info = computeAge();
+  renderAge(info);
+  renderItems();
+  var r = compute();
+  renderResult(r); renderFactors(r); renderPattern(r); renderUncert(r); renderRec(r);
+  renderGma(); renderHine();
+}
+
+function resetAll(){
+  state.sel = {}; state.flags = {}; state.gma = { checks:{}, traj:[] };
+  state.hine = { sc:{}, side:{}, asym:{}, miles:{}, mileAge:{}, behs:{} };
+  ["pname","pdob","pegw","pegd","pmanual"].forEach(function(id){ document.getElementById(id).value = ""; });
+  renderAll(); setTab("eval");
+}
+
+["pexam","pdob","pegw","pegd","pmanual","pver"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", renderAll);
+  document.getElementById(id).addEventListener("change", renderAll);
+});
+
+/* ══ Aplicación instalable ══ */
+var deferredPrompt = null;
+
+function isStandalone(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+function isIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+}
+function showBar(title, msg, showBtn, cls){
+  var b = document.getElementById("installBar");
+  document.getElementById("ibTitle").textContent = title;
+  document.getElementById("ibMsg").innerHTML = msg;
+  document.getElementById("ibBtn").hidden = !showBtn;
+  b.className = "installbar" + (cls ? " " + cls : "");
+  b.hidden = false;
+}
+function doInstall(){
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(){
+    deferredPrompt = null;
+    document.getElementById("installBar").hidden = true;
+  });
+}
+window.addEventListener("beforeinstallprompt", function(e){
+  e.preventDefault(); deferredPrompt = e;
+  if (!isStandalone()) showBar("Instalar en el dispositivo",
+    "Queda como aplicación en la pantalla de inicio y funciona sin conexión a pie de cama.", true);
+});
+window.addEventListener("appinstalled", function(){
+  deferredPrompt = null; document.getElementById("installBar").hidden = true;
+});
+function updateNet(){
+  var d = document.getElementById("netDot"), t = document.getElementById("netTxt");
+  if (navigator.onLine){ d.className = "offdot"; t.textContent = "Sin conexión requerida"; }
+  else { d.className = "offdot off"; t.textContent = "Sin conexión · desde caché"; }
+}
+window.addEventListener("online", updateNet);
+window.addEventListener("offline", updateNet);
+updateNet();
+if (!isStandalone() && isIOS()){
+  showBar("Añadir a la pantalla de inicio",
+    "En Safari toque <b>Compartir</b> y luego <b>Añadir a pantalla de inicio</b>. Queda como aplicación y funciona sin conexión.", false);
+}
+if ("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").then(function(reg){
+      reg.addEventListener("updatefound", function(){
+        var nw = reg.installing; if (!nw) return;
+        nw.addEventListener("statechange", function(){
+          if (nw.state === "installed" && navigator.serviceWorker.controller){
+            showBar("Nueva versión disponible",
+              "Se descargó una actualización. Cierre y vuelva a abrir la aplicación para usarla.", false, "upd");
+          }
+        });
+      });
+    }).catch(function(){});
+  });
+}
+
+(function(){
+  var t = new Date();
+  document.getElementById("pexam").value =
+    t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") + "-" + String(t.getDate()).padStart(2,"0");
+})();
+
+renderAll();
+</script>
+</body>
+</html>
